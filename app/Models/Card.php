@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class Card extends Model
 {
@@ -55,6 +56,10 @@ class Card extends Model
 
     public function scopeScenes(Builder $query): Builder{
         return $query->where('feature', 'scene');
+    }
+
+    public function scopeStandardVariants(Builder $query): Builder{
+        return $query->whereNull('branch');
     }
 
     public function getRelatedCards(){
