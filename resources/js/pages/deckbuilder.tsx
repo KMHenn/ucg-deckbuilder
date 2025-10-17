@@ -1,0 +1,67 @@
+import TcgCard from '@/components/tcg-card';
+import BaseLayout from '../layouts/base-layout';
+import { useState } from 'react';
+import TcgCardModal from '@/components/tcg-card-modal';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+
+
+const style = {
+  position: 'relative',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '40vw',
+  background: 'black',
+  border: '2px solid #000',
+  boxShadow: 24,
+  borderRadius: '5%',
+  p: 4,
+};
+
+export default function Deckbuilder({ cards = [] }) {
+    const cardData = cards.data ?? [];
+    
+    const [selectedCard, setSelectedCard] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleOpen = (card) => {
+        setSelectedCard(card);
+        setIsModalOpen(true);
+    };
+
+    const handleClose = () => {
+        setSelectedCard(null);
+        setIsModalOpen(false);
+    };
+
+    return (
+        <BaseLayout>
+            <div>
+                <h1>Deckbuilder</h1>
+                <div className="flex justify-between">
+                    <div className="grid w-1/2 bg-rose-50 text-black">
+                        <h1>Deck</h1>
+                    </div>
+                    <div className="w-fit bg-amber-50 p-4">
+                        <div className="w-full flex flex-grow pb-4">
+                            <TextField size="small" fullWidth id="search-field" label="Search cards" variant="outlined" />
+                            <Button size="small" classes="grow-0" variant="contained">Search</Button>
+                        </div>
+                        <div className=" h-[80vh] grid grid-cols-3 xl:grid-cols-4 gap-2 xl:gap-4 overflow-y-scroll">
+                            {cardData.map(card => (
+                                <TcgCard card={card} key={card.id} onClick={() => handleOpen(card)}></TcgCard>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <TcgCardModal
+                open={isModalOpen}
+                card={selectedCard}
+                onClose={handleClose}>    
+            </TcgCardModal>
+        </BaseLayout>
+    );
+}
