@@ -30,12 +30,14 @@ class Card extends Model
         'branch',
         'number',
         'errata_url',
-        'ascended_date'
+        'ascended_date',
+        'override_card_limit'
     ];
 
     protected $casts = [
         'bp_ranks' => 'json',
-        'ascended_date' => 'date'
+        'ascended_date' => 'date',
+        'override_card_limit' => 'boolean'
     ];
 
     public function scopeCharacterName(Builder $query, string $characterName): Builder{
@@ -63,7 +65,12 @@ class Card extends Model
     }
 
     public function getRelatedCards(){
-        return self::where('section', $this->section)->where('bundle', $this->bundle)->where('serial', $this->serial)->where('id', '!=', $this->id)->get();
+        return self::where('id', '!=', $this->id)
+            ->where('section', $this->section)
+            ->where('bundle', $this->bundle)
+            ->where('serial', $this->serial)
+            ->whereNotNull('branch')
+            ->get();
     }
 
     public function isAlternate(): bool{

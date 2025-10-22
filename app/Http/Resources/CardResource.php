@@ -22,6 +22,9 @@ class CardResource extends JsonResource
             'effect' => $this->effect,
             'thumbnail_url' => $this->thumbnail_url,
             'errata' => $this->errata_url,
+            'ascended' => !is_null($this->ascended_date),
+            'override_card_limit' => $this->override_card_limit,
+            'related_cards' => $this->whenNull($this->branch, $this->getRelatedCards()) ?? []
         ];
     }
 }

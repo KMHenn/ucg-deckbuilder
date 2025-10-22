@@ -33,6 +33,7 @@ return new class extends Migration
             $table->string('number')->nullable();
             $table->string('errata_url')->nullable();
             $table->date('ascended_date')->nullable();
+            $table->boolean('override_card_limit')->default(false);
             $table->timestamps();
         });
     }

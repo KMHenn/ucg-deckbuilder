@@ -38,6 +38,7 @@ class SyncCardData extends Command
             $cardsFound = count($jsonArray['data']);
             $this->output->text($cardsFound . ' cards found.');
             $this->output->progressStart($cardsFound);
+            
             foreach($jsonArray['data'] as $card){
                 $bpData = null;
                 if($card['feature']['value'] !== 'scene'){
@@ -79,7 +80,8 @@ class SyncCardData extends Command
                     'serial' => $card['serial'],
                     'branch' => $card['branch'],
                     'number' => $card['number'],
-                    'errata_url' => $card['detail']['errata_url'] ?? null
+                    'errata_url' => $card['detail']['errata_url'] ?? null,
+                    'override_card_limit' => str_contains($card['detail']['effect'], 'A deck may include any number of this card.') ? 1 : 0
                 ]);
 
                 $this->output->progressAdvance();

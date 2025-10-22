@@ -9,10 +9,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/deckbuilder', function(){
-    return Inertia::render('deckbuilder', [
-        'cards' => Card::whereNull('ascended_date')->get()->toResourceCollection()
-    ]);
-        // return Inertia::render('deckbuilder');
+    return Inertia::render('deckbuilder', ['totalPages' => ceil(Card::count() / 12)]);
 })->name('deckbuilder');
 
 Route::get('/card-tracker', function(){
