@@ -36,6 +36,16 @@ export default function Deckbuilder({ totalPages = 1 }) {
         setIsModalOpen(false);
     };
 
+    const addToDeckList = (deckList, card, quantity) => {
+        setDeckList([
+            ...deckList,
+            {
+                card: card,
+                qty: quantity
+            }
+        ]);
+    }
+
     useEffect(() => {
         fetch(`/api/card-list?page=${currentPage}`)
             .then(response => response.json())
@@ -50,6 +60,15 @@ export default function Deckbuilder({ totalPages = 1 }) {
                 <div className="flex justify-between">
                     <div className="grid w-1/2 bg-rose-50 text-black">
                         <h1>Deck</h1>
+                          <div className=" h-fit grid grid-cols-3 xl:grid-cols-4 gap-2 xl:gap-4">
+                            {deckList.map(card => (
+                                <TcgCard
+                                    card={card} 
+                                    key={card.id}
+                                    onClick={() => handleOpen(card)}>    
+                                </TcgCard>
+                            ))}
+                        </div>
                     </div>
                     <div className="w-fit bg-amber-50 p-4">
                         <div className="w-full flex flex-grow pb-4">
