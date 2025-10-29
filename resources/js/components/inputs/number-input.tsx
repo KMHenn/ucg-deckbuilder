@@ -1,9 +1,9 @@
 import { NumberField } from '@base-ui-components/react/number-field';
 
-export default function NumberInput({label, id, min, max}){
+export default function NumberInput({label, id, min, max, value, onChange}){
     return (
         <>
-        <NumberField.Root id={id} defaultValue={0} min={min} max={max} className="flex flex-col items-start gap-1">
+        <NumberField.Root id={id} defaultValue={0} min={min} max={max} value={value} onValueChange={onChange} className="flex flex-col items-start gap-1">
           <NumberField.ScrubArea className="cursor-ew-resize">
               <label htmlFor={id} className="cursor-ew-resize text-sm font-medium text-gray-900">
               {label}

@@ -25,6 +25,7 @@ export default function Deckbuilder({ totalPages = 1 }) {
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedCard, setSelectedCard] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [deck, setDeck] = useState([]);
 
     const handleOpen = (card) => {
         setSelectedCard(card);
@@ -36,15 +37,20 @@ export default function Deckbuilder({ totalPages = 1 }) {
         setIsModalOpen(false);
     };
 
-    const addToDeckList = (deckList, card, quantity) => {
-        setDeckList([
-            ...deckList,
-            {
-                card: card,
-                qty: quantity
+    const updateDeck = (card, qty) => {
+        console.log('card: ' + card.id + ' qty: ' + qty);
+        setDeck((prevDeck) => {
+            if(qty === 0){
+                return prevDeck.filter((c) => c.id !== card.id);
             }
-        ]);
-    }
+
+            if(prevDeck.find((c) => c.id === card.id)){
+                return prevDeck.map((c) => c.id === card.id ? {...card, qty} : c);
+            }
+
+            return [...prevDeck, {...card, qty}];
+        });
+    } 
 
     useEffect(() => {
         fetch(`/api/card-list?page=${currentPage}`)
@@ -61,8 +67,9 @@ export default function Deckbuilder({ totalPages = 1 }) {
                     <div className="grid w-1/2 bg-rose-50 text-black">
                         <h1>Deck</h1>
                           <div className=" h-fit grid grid-cols-3 xl:grid-cols-4 gap-2 xl:gap-4">
-                            {deckList.map(card => (
-                                <TcgCard
+                            {deck.map(card => (
+                                <TcgCard 
+                                    onUpdate={updateDeck}
                                     card={card} 
                                     key={card.id}
                                     onClick={() => handleOpen(card)}>    
@@ -77,7 +84,12 @@ export default function Deckbuilder({ totalPages = 1 }) {
                         </div>
                         <div className=" h-fit grid grid-cols-3 xl:grid-cols-4 gap-2 xl:gap-4">
                             {cardList.map(card => (
-                                <TcgCard card={card} key={card.id} onClick={() => handleOpen(card)}></TcgCard>
+                                <TcgCard 
+                                    onUpdate={updateDeck}
+                                    card={card} 
+                                    key={card.id} 
+                                    onClick={() => handleOpen(card)}>
+                                </TcgCard>
                             ))}
                         </div>
                         <div className="flex justify-center items-center">
@@ -88,6 +100,7 @@ export default function Deckbuilder({ totalPages = 1 }) {
             </div>
 
             <TcgCardModal
+                onUpdate={updateDeck}
                 open={isModalOpen}
                 card={selectedCard}
                 onClose={handleClose}>    

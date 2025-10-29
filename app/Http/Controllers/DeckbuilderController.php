@@ -7,7 +7,6 @@ use App\Models\Card;
 
 class DeckbuilderController extends Controller
 {
-    //
     public function getCardList(Request $request){
         $perPage = 12;
         $pageNumber = $request->input('page', 1);
@@ -16,5 +15,9 @@ class DeckbuilderController extends Controller
             ->limit($perPage)
             ->get()
             ->toResourceCollection();
+    }
+
+    public function updateDeck(Request $request){
+        
     }
 }
