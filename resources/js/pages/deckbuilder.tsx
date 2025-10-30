@@ -54,7 +54,7 @@ export default function Deckbuilder({ totalPages = 1 }) {
     const totalCards = deck.reduce((sum, card) => sum + (card.qty || 0), 0);
 
     useEffect(() => {
-        fetch(`/api/card-list?page=${currentPage}`)
+        fetch(`/api/cards?page=${currentPage}`)
             .then(response => response.json())
             .then(dataCollection => setCardList(dataCollection.data))
             .catch(error => console.error(error));
@@ -65,9 +65,10 @@ export default function Deckbuilder({ totalPages = 1 }) {
             <div>
                 <h1>Deckbuilder</h1>
                 <div className="flex justify-between">
-                    <div className="grid w-1/2 bg-rose-50 text-black">
-                            <div>
-                                {totalCards} / 50
+                    <div className="grid w-1/2 bg-rose-50 text-black content-baseline p-4">
+                            <div className="h-fit w-full flex flex-grow pb-4">
+                                <h1>{totalCards} / 50</h1>
+                                {totalCards > 50 ? 'Deck Limit Exceeded' : ''}
                             </div>
                           <div className="h-fit grid grid-cols-3 xl:grid-cols-4 gap-2 xl:gap-4 mb-auto">
                             {deck.map(card => (

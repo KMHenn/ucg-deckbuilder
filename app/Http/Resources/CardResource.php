@@ -18,6 +18,7 @@ class CardResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'subtitle' => $this->subtitle,
+            'feature' => $this->feature,
             'formatted_name' => $this->formattedName(),
             'effect' => $this->effect,
             'thumbnail_url' => $this->thumbnail_url,

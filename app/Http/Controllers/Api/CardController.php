@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Card;
 
-class DeckbuilderController extends Controller
+class CardController extends Controller
 {
-    public function getCardList(Request $request){
+    public function show(Request $request){
         $perPage = 12;
         $pageNumber = $request->input('page', 1);
         return Card::whereNull('ascended_date')
@@ -15,9 +15,5 @@ class DeckbuilderController extends Controller
             ->limit($perPage)
             ->get()
             ->toResourceCollection();
-    }
-
-    public function updateDeck(Request $request){
-        
     }
 }
