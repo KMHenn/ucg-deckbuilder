@@ -38,7 +38,6 @@ export default function Deckbuilder({ totalPages = 1 }) {
     };
 
     const updateDeck = (card, qty) => {
-        console.log('card: ' + card.id + ' qty: ' + qty);
         setDeck((prevDeck) => {
             if(qty === 0){
                 return prevDeck.filter((c) => c.id !== card.id);
@@ -51,6 +50,8 @@ export default function Deckbuilder({ totalPages = 1 }) {
             return [...prevDeck, {...card, qty}];
         });
     } 
+
+    const totalCards = deck.reduce((sum, card) => sum + (card.qty || 0), 0);
 
     useEffect(() => {
         fetch(`/api/card-list?page=${currentPage}`)
@@ -65,11 +66,14 @@ export default function Deckbuilder({ totalPages = 1 }) {
                 <h1>Deckbuilder</h1>
                 <div className="flex justify-between">
                     <div className="grid w-1/2 bg-rose-50 text-black">
-                        <h1>Deck</h1>
-                          <div className=" h-fit grid grid-cols-3 xl:grid-cols-4 gap-2 xl:gap-4">
+                            <div>
+                                {totalCards} / 50
+                            </div>
+                          <div className="h-fit grid grid-cols-3 xl:grid-cols-4 gap-2 xl:gap-4 mb-auto">
                             {deck.map(card => (
                                 <TcgCard 
                                     onUpdate={updateDeck}
+                                    quantity={card.qty}
                                     card={card} 
                                     key={card.id}
                                     onClick={() => handleOpen(card)}>    
@@ -83,14 +87,18 @@ export default function Deckbuilder({ totalPages = 1 }) {
                             <Button size="small" classes="grow-0" variant="contained">Search</Button>
                         </div>
                         <div className=" h-fit grid grid-cols-3 xl:grid-cols-4 gap-2 xl:gap-4">
-                            {cardList.map(card => (
-                                <TcgCard 
+                            {cardList.map(card => {
+                                const deckCard = deck.find((c) => c.id === card.id);
+                                const qty = deckCard ? deckCard.qty : 0;
+
+                                return (<TcgCard 
+                                    quantity={qty}
                                     onUpdate={updateDeck}
                                     card={card} 
                                     key={card.id} 
                                     onClick={() => handleOpen(card)}>
-                                </TcgCard>
-                            ))}
+                                </TcgCard>);
+                            })}
                         </div>
                         <div className="flex justify-center items-center">
                              <Pagination className="w-fit" count={totalPages} onChange={(event, pageNumber) => setCurrentPage(pageNumber)} />
