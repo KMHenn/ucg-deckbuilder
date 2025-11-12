@@ -1,4 +1,3 @@
-import React from 'react';
 import { Head, Link, usePage } from '@inertiajs/react';
 
 export default function BaseLayout({ children }) {
@@ -6,7 +5,7 @@ export default function BaseLayout({ children }) {
 
   return (
     <div>
-      <header className="py-4 border-b p-4">
+      <header className="py-4 border-b px-6 md:px-12">
         <nav className="justify-between flex">
           <div>
             <Link href="/" className="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]">Home</Link>
@@ -26,7 +25,7 @@ export default function BaseLayout({ children }) {
         }
         </nav>
       </header>
-      <main className="p-4">{children}</main>
+      <main className="py-4 px-6 md:px-12">{children}</main>
     </div>
   );
 }

@@ -1,13 +1,14 @@
 
 export default function TcgCardDisplay({ card, quantity, onClick }) {
-    // @TODO fix formatting on card details
     return (
-    <div className="flex flex-col w-full bg-[#00000020] rounded-md p-2 text-black" key={card.id} data-id={card.id} onClick={onClick}>
+    <div className="flex flex-col w-full bg-[#ffffffeb] shadow-md rounded-md p-2 text-black" key={card.id} data-id={card.id} onClick={onClick}>
         {quantity > 0 && (
-            <div className="bg-black text-white text-xs font-bold rounded-full w-fit h-fit p-2 mb-2 flex items-center ml-auto">
+            <div className="absolute self-end bg-black text-white text-xs font-bold rounded-full w-fit h-fit p-2 mb-2 flex items-center ml-auto">
                 x{quantity}
             </div>
         )}
+
+        {/* @TODO hate how images are adjusting to window scaling, especially scenes */}
         <div className="items-center pb-2 my-auto mx-auto">
             <img 
                 alt={card.number} 
@@ -17,19 +18,22 @@ export default function TcgCardDisplay({ card, quantity, onClick }) {
             </img>
         </div>
 
-        <div className="flex justify-between">
-            <div className="mr-2">
-                <h1 className="text-black text-sm font-semibold">{card.name}</h1>
-                <h2 className="text-black text-xs">{card.subtitle}</h2>
+{/* @TODO tags aren't wrapping to new line*/}
+        <div className="flex flex-col gap-4 text-black">
+            <div>
+                <h1 className="text-sm font-semibold">{card.name}</h1>
+                <h2 className="text-xs">{card.subtitle}</h2>
             </div>
             
-            <div className="flex flex-col text-xs text-right ml-2">
-                <span>{card.feature}</span>
+            <div className="flex gap-2 text-xs">
+                <div className="tcg-card-display-tag">{card.rarity}</div>
+                <div className="tcg-card-display-tag">{card.feature}</div>
                 { card.feature === 'Scene' ? 
-                    <span>Round {card.round}</span> : 
+                    <div className="tcg-card-display-tag">Round {card.round}</div> : 
                     <>
-                    <span>{card.type}</span>
-                    <span>Level {card.level}</span>
+                    <div className="tcg-card-display-tag">{card.character_name}</div>
+                    <div className="tcg-card-display-tag">{card.type}</div>
+                    <div className="tcg-card-display-tag">Level {card.level}</div>
                     </>
                 }
             </div>

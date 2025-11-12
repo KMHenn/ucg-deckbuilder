@@ -91,11 +91,13 @@ export default function Deckbuilder({ totalPages = 1 }) {
                                 const deckCard = deck.find((c) => c.id === card.id);
                                 const qty = deckCard ? deckCard.qty : 0;
 
+                                /** @TODO why isn't the quantity showing in the modal when opened from the card list */
                                 return (<TcgCardDisplay 
                                     quantity={qty}
                                     onUpdate={updateDeck}
                                     card={card} 
                                     key={card.id} 
+                                    quantity={qty}
                                     onClick={() => handleOpen(card)} />);
                             })}
                         </div>

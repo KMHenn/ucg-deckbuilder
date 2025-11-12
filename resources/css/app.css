@@ -141,3 +141,7 @@
         @apply bg-background text-foreground;
     }
 }
+
+.tcg-card-display-tag{
+    @apply rounded-sm shadow-sm p-1 bg-white text-nowrap w-fit;
+}

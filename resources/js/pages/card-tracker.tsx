@@ -2,12 +2,12 @@ import BaseLayout from '../layouts/base-layout';
 import Table from '@mui/material/Table';
 import Box from '@mui/material/Box';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableFooter from '@mui/material/TableFooter';
 import TablePagination from '@mui/material/TablePagination';
+import TableCell from '@mui/material/TableCell';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
@@ -16,7 +16,7 @@ import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import { useTheme } from '@mui/material/styles';
 import { useState, useEffect } from 'react';
-import NumberInput from '@/components/inputs/number-input';
+import TcgCardTableRow from '@/components/tcg-card-table-row';
 
 interface TablePaginationActionsProps {
   count: number;
@@ -87,7 +87,7 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
 export default function CardTracker({totalCards = 1}) {
     const theme = useTheme();
     const [cardList, setCardList] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
     const handleChangePage = (
@@ -101,15 +101,16 @@ export default function CardTracker({totalCards = 1}) {
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
-        setCurrentPage(1);
+        setCurrentPage(0);
     };
         
     useEffect(() => {
-        fetch(`/api/cards?page=${currentPage}&per_page=${rowsPerPage}`)
+        fetch(`/api/cards?page=${currentPage + 1}&per_page=${rowsPerPage}`)
             .then(response => response.json())
             .then(dataCollection => setCardList(dataCollection.data))
             .catch(error => console.error(error));
     }, [currentPage]);
+    
 
     return (
         <BaseLayout>
@@ -117,27 +118,20 @@ export default function CardTracker({totalCards = 1}) {
                 <h1>Card Tracker</h1>
 
                 <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <Table sx={{ minWidth: 650 }} aria-label="card-tracker">
                         <TableHead>
                             <TableRow>
+                              {/* @TODO collapsable preview col? in general, fix column spans */}
                                 <TableCell>Preview</TableCell>
                                 <TableCell>Card Name</TableCell>
                                 <TableCell>Feature</TableCell>
                                 <TableCell>Number</TableCell>
-                                <TableCell></TableCell>
+                                <TableCell>Quantity</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                         {cardList.map((card) => (
-                            <TableRow key={card.number} sx={{ '&:last-child td, &:last-child th': { border: 0 } }} >
-                                <TableCell><img className="w-auto h-auto max-w-30 max-h-30" src={card.thumbnail_url} alt={card.number}/></TableCell>
-                                <TableCell>
-                                    {card.name}
-                                </TableCell>
-                                <TableCell>{card.feature}</TableCell>
-                                <TableCell>{card.number}</TableCell>
-                                <TableCell><NumberInput/></TableCell>
-                            </TableRow>
+                          <TcgCardTableRow card={card}/>
                         ))}
                         </TableBody>
                         <TableFooter>

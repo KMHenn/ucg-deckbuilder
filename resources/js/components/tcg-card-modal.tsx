@@ -1,6 +1,5 @@
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-import TcgCard from '@/components/tcg-card-display';
 import NumberInput from './inputs/number-input';
 import { useState, useEffect } from 'react';
 
@@ -25,14 +24,14 @@ export default function TcgCardModal({card, open, onUpdate, onClose}) {
     const [quantity, setQuantity] = useState(0);
 
     useEffect(() => {
-        console.log('setting qty');
+        // console.log('setting qty');
         if(card.qty){
             setQuantity(card.qty);
-            console.log('set to ' + card.qty);
+            // console.log('set to ' + card.qty);
         }
         else{
             setQuantity(0);
-            console.log('set to ' + 0);
+            // console.log('set to ' + 0);
         }
     }, [card]);
 
@@ -63,17 +62,17 @@ export default function TcgCardModal({card, open, onUpdate, onClose}) {
                                 max={card.override_card_limit ? "50" : "4"}
                                 value={quantity}
                                 onChange={(value) => handleQuantityChange(value ?? 0)}/>
-                        <div className="flex flex-col items-center">
+                        {/* @TODO fix display <div className="flex flex-col items-center">
                             <span className="w-fit mx-auto">Variants</span>
                             <div className="grid grid-cols-3 gap-4">
                                 {card.related_cards != [] ?     
                                     card.related_cards.map(relatedCard => (
-                                        <TcgCard card={relatedCard} key={relatedCard.id}></TcgCard>
+                                        <TcgCardDisplay card={relatedCard} key={relatedCard.id}/>
                                     )) 
                                     : ''
                                 }
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 )}
             </Box>

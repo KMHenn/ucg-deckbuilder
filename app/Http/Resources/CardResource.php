@@ -26,6 +26,8 @@ class CardResource extends JsonResource
             'formatted_name' => $this->formattedName(),
             'effect' => $this->effect,
             'thumbnail_url' => $this->thumbnail_url,
+            'rarity' => $this->rarity,
+            'character_name' => $this->character_name,
             'errata' => $this->errata_url,
             'ascended' => !is_null($this->ascended_date),
             'override_card_limit' => $this->override_card_limit,
