@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-import TcgCard from '@/components/tcg-card';
+import TcgCard from '@/components/tcg-card-display';
 import NumberInput from './inputs/number-input';
 import { useState, useEffect } from 'react';
 

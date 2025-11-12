@@ -85,6 +85,15 @@ class Card extends Model
         return sprintf('%s - %s', $this->name, $this->subtitle);
     }
 
+    public function formattedFeature(): string{
+        return match($this->feature){
+            'ultra_hero' => 'Ultra Hero',
+            'kaiju' => 'Kaiju',
+            'scene' => 'Scene',
+            default => $this->feature
+        };
+    }
+
     private function getBaseIdentifier(): string{
         if(!is_null($this->bundle)){
             return sprintf('%s%s-%s', $this->section, $this->bundle,$this->serial);

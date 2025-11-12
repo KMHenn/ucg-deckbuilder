@@ -13,5 +13,5 @@ Route::get('/deckbuilder', function(){
 })->name('deckbuilder');
 
 Route::get('/card-tracker', function(){
-    return Inertia::render('card-tracker');
+    return Inertia::render('card-tracker', ['total' => Card::count()]);
 })->name('card-tracker');

@@ -1,4 +1,4 @@
-import TcgCard from '@/components/tcg-card';
+import TcgCardDisplay from '@/components/tcg-card-display';
 import BaseLayout from '../layouts/base-layout';
 import { useState, useEffect } from 'react';
 import TcgCardModal from '@/components/tcg-card-modal';
@@ -64,41 +64,39 @@ export default function Deckbuilder({ totalPages = 1 }) {
         <BaseLayout>
             <div>
                 <h1>Deckbuilder</h1>
-                <div className="flex justify-between">
-                    <div className="grid w-1/2 bg-rose-50 text-black content-baseline p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 justify-between">
+                    <div className="grid bg-rose-50 text-black content-baseline p-4">
                             <div className="h-fit w-full flex flex-grow pb-4">
                                 <h1>{totalCards} / 50</h1>
                                 {totalCards > 50 ? 'Deck Limit Exceeded' : ''}
                             </div>
-                          <div className="h-fit grid grid-cols-3 xl:grid-cols-4 gap-2 xl:gap-4 mb-auto">
+                          <div className="h-fit grid grid-cols-2 xl:grid-cols-3 gap-2 xl:gap-4 mb-auto">
                             {deck.map(card => (
-                                <TcgCard 
+                                <TcgCardDisplay 
                                     onUpdate={updateDeck}
                                     quantity={card.qty}
                                     card={card} 
                                     key={card.id}
-                                    onClick={() => handleOpen(card)}>    
-                                </TcgCard>
+                                    onClick={() => handleOpen(card)}/> 
                             ))}
                         </div>
                     </div>
-                    <div className="w-fit bg-amber-50 p-4">
+                    <div className=" bg-amber-50 p-4">
                         <div className="w-full flex flex-grow pb-4">
                             <TextField size="small" fullWidth id="search-field" label="Search cards" variant="outlined" />
                             <Button size="small" classes="grow-0" variant="contained">Search</Button>
                         </div>
-                        <div className=" h-fit grid grid-cols-3 xl:grid-cols-4 gap-2 xl:gap-4">
+                        <div className=" h-fit grid grid-cols-2 xl:grid-cols-3 gap-2 xl:gap-4">
                             {cardList.map(card => {
                                 const deckCard = deck.find((c) => c.id === card.id);
                                 const qty = deckCard ? deckCard.qty : 0;
 
-                                return (<TcgCard 
+                                return (<TcgCardDisplay 
                                     quantity={qty}
                                     onUpdate={updateDeck}
                                     card={card} 
                                     key={card.id} 
-                                    onClick={() => handleOpen(card)}>
-                                </TcgCard>);
+                                    onClick={() => handleOpen(card)} />);
                             })}
                         </div>
                         <div className="flex justify-center items-center">
