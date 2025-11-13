@@ -1,31 +1,51 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
+import { useState } from 'react';
+import { useDisclosure } from '@mantine/hooks';
+import { HeadlessMantineProvider } from '@mantine/core';
+import { Burger, Container, Group, Button} from '@mantine/core';
+import classes from '../../css/modules/header.module.css';
 
 export default function BaseLayout({ children }) {
-      const { auth } = usePage<SharedData>().props;
+  // const { auth } = usePage<SharedData>().props;
+  const links = [
+    { link: '/', label: 'Home' },
+    { link: '/deckbuilder', label: 'Deckbuilder' },
+    { link: '/card-tracker', label: 'Card Tracker' },
+  ];
+
+  const [opened, { toggle }] = useDisclosure(false);
+  const [active, setActive] = useState(links[0].link);
 
   return (
-    <div>
-      <header className="py-4 border-b px-6 md:px-12">
-        <nav className="justify-between flex">
-          <div>
-            <Link href="/" className="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]">Home</Link>
-            <Link href="/deckbuilder" className="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]">Deckbuilder</Link>
-            <Link href="/card-tracker" className="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]">Card Tracker</Link>
-          
-          </div>
-            {auth.user ? (<div></div>)
-            : (<div>
-                <Link href="/login" className="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]">
-                  Log in
-                </Link>
-                <Link href="register" className="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]" >
-                  Register
-                </Link>
-              </div>)
-        }
-        </nav>
+    <HeadlessMantineProvider>
+      <header className={classes.header}>
+        <Container size="md" className={classes.inner}>
+          <Group gap={5} visibleFrom="xs" className={classes.inner}>
+            {links.map((link) => (
+              <a
+                key={link.label}
+                href={link.link}
+                className="hover:bg-blue-400"
+                data-active={active === link.link || undefined}
+                onClick={(event) => {
+                  setActive(link.link);
+                }}
+              >
+                {link.label}
+              </a>
+            ))}
+          </Group>
+
+          <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
+
+          <Group>
+            <Button variant="default">Log in</Button>
+            <Button>Sign up</Button>
+          </Group>
+
+        </Container>
       </header>
       <main className="py-4 px-6 md:px-12">{children}</main>
-    </div>
+    </HeadlessMantineProvider>
   );
 }

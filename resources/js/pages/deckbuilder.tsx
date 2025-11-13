@@ -2,9 +2,10 @@ import TcgCardDisplay from '@/components/tcg-card-display';
 import BaseLayout from '../layouts/base-layout';
 import { useState, useEffect } from 'react';
 import TcgCardModal from '@/components/tcg-card-modal';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Pagination from '@mui/material/Pagination';
+import { useDisclosure } from '@mantine/hooks';
+// import Button from '@mui/material/Button';
+// import TextField from '@mui/material/TextField';
+// import Pagination from '@mui/material/Pagination';
 
 
 const style = {
@@ -25,6 +26,7 @@ export default function Deckbuilder({ totalPages = 1 }) {
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedCard, setSelectedCard] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalOpened, {open, close}] = useDisclosure(false);
     const [deck, setDeck] = useState([]);
 
     const handleOpen = (card) => {
@@ -83,8 +85,8 @@ export default function Deckbuilder({ totalPages = 1 }) {
                     </div>
                     <div className=" bg-amber-50 p-4">
                         <div className="w-full flex flex-grow pb-4">
-                            <TextField size="small" fullWidth id="search-field" label="Search cards" variant="outlined" />
-                            <Button size="small" classes="grow-0" variant="contained">Search</Button>
+                            {/* <TextField size="small" fullWidth id="search-field" label="Search cards" variant="outlined" />
+                            <Button size="small" classes="grow-0" variant="contained">Search</Button> */}
                         </div>
                         <div className=" h-fit grid grid-cols-2 xl:grid-cols-3 gap-2 xl:gap-4">
                             {cardList.map(card => {
@@ -102,7 +104,7 @@ export default function Deckbuilder({ totalPages = 1 }) {
                             })}
                         </div>
                         <div className="flex justify-center items-center">
-                             <Pagination className="w-fit" count={totalPages} onChange={(event, pageNumber) => setCurrentPage(pageNumber)} />
+                             {/* <Pagination className="w-fit" count={totalPages} onChange={(event, pageNumber) => setCurrentPage(pageNumber)} /> */}
                         </div>
                     </div>
                 </div>
@@ -110,9 +112,9 @@ export default function Deckbuilder({ totalPages = 1 }) {
 
             <TcgCardModal
                 onUpdate={updateDeck}
-                open={isModalOpen}
+                opened={modalOpened}
                 card={selectedCard}
-                onClose={handleClose}>    
+                onClose={close}>    
             </TcgCardModal>
         </BaseLayout>
     );
