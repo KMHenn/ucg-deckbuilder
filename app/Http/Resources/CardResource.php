@@ -31,7 +31,26 @@ class CardResource extends JsonResource
             'errata' => $this->errata_url,
             'ascended' => !is_null($this->ascended_date),
             'override_card_limit' => $this->override_card_limit,
-            'related_cards' => $this->whenNull($this->branch, $this->getRelatedCards()) ?? []
+            'related_cards' => $this->whenNull($this->branch, $this->getRelatedCards()) ?? [],
+            'details' => $this->getDetailsForCard(),
         ];
+    }
+
+    private function getDetailsForCard(): array{
+        $details = [$this->formattedFeature()];
+        if($this->feature === 'scene'){
+            return array_merge(
+                $details, 
+                ['Round ' . $this->round]
+            );
+        }
+
+        return array_merge(
+            $details, 
+            [
+                ucfirst($this->type),
+                'Level ' . $this->level,
+            ]
+        );
     }
 }

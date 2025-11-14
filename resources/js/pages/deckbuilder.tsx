@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/base-layout';
 import { useState, useEffect } from 'react';
 import TcgCardModal from '@/components/tcg-card-modal';
 import { useDisclosure } from '@mantine/hooks';
+import '@mantine/core/styles/Modal.css';
 // import Button from '@mui/material/Button';
 // import TextField from '@mui/material/TextField';
 // import Pagination from '@mui/material/Pagination';
@@ -65,9 +66,8 @@ export default function Deckbuilder({ totalPages = 1 }) {
     return (
         <BaseLayout>
             <div>
-                <h1>Deckbuilder</h1>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 justify-between">
-                    <div className="grid bg-rose-50 text-black content-baseline p-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 justify-between">
+                    <div className="md:col-span-2 grid shadow-md content-baseline p-4">
                             <div className="h-fit w-full flex flex-grow pb-4">
                                 <h1>{totalCards} / 50</h1>
                                 {totalCards > 50 ? 'Deck Limit Exceeded' : ''}
@@ -83,12 +83,12 @@ export default function Deckbuilder({ totalPages = 1 }) {
                             ))}
                         </div>
                     </div>
-                    <div className=" bg-amber-50 p-4">
+                    <div className="shadow-md p-4">
                         <div className="w-full flex flex-grow pb-4">
                             {/* <TextField size="small" fullWidth id="search-field" label="Search cards" variant="outlined" />
                             <Button size="small" classes="grow-0" variant="contained">Search</Button> */}
                         </div>
-                        <div className=" h-fit grid grid-cols-2 xl:grid-cols-3 gap-2 xl:gap-4">
+                        <div className=" h-fit grid grid-cols-2 gap-2 xl:gap-4">
                             {cardList.map(card => {
                                 const deckCard = deck.find((c) => c.id === card.id);
                                 const qty = deckCard ? deckCard.qty : 0;
