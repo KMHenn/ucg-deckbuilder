@@ -4,9 +4,12 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Traits\IsCardResource;
 
-class CardResource extends JsonResource
+class CardDisplayResource extends JsonResource
 {
+    use IsCardResource;
+
     /**
      * Transform the resource into an array.
      *
@@ -18,12 +21,12 @@ class CardResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'subtitle' => $this->subtitle,
+            'formatted_name' => $this->formattedName(),
             'number' => $this->number,
             'feature' => $this->formattedFeature(),
             'type' => ucfirst($this->type),
             'round' => $this->whenNotNull($this->round),
             'level' => $this->whenNotNull($this->level),
-            'formatted_name' => $this->formattedName(),
             'effect' => $this->effect,
             'thumbnail_url' => $this->thumbnail_url,
             'rarity' => $this->rarity,
@@ -34,23 +37,5 @@ class CardResource extends JsonResource
             'related_cards' => $this->whenNull($this->branch, $this->getRelatedCards()) ?? [],
             'details' => $this->getDetailsForCard(),
         ];
-    }
-
-    private function getDetailsForCard(): array{
-        $details = [$this->formattedFeature()];
-        if($this->feature === 'scene'){
-            return array_merge(
-                $details, 
-                ['Round ' . $this->round]
-            );
-        }
-
-        return array_merge(
-            $details, 
-            [
-                ucfirst($this->type),
-                'Level ' . $this->level,
-            ]
-        );
     }
 }

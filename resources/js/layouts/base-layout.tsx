@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { MantineProvider } from '@mantine/core';
 import '@mantine/core/styles.css';
+import 'mantine-datatable/styles.layer.css';
 
 import { Burger, Container, Group, Button} from '@mantine/core';
 
@@ -22,7 +23,7 @@ export default function BaseLayout({ children }) {
       <div className="min-h-screen">
         <header className="flex h-[60px] items-center shadow-sm px-6 md:px-8">
           <Container size="md" class="flex justify-between w-full">
-            <Group gap={5} class="flex gap-4" visibleFrom="xs" >
+            <Group class="flex gap-6" visibleFrom="md">
               {links.map((link) => (
                 <a
                   key={link.label}
@@ -38,7 +39,7 @@ export default function BaseLayout({ children }) {
               ))}
             </Group>
 
-            <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
+            <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" />
 
             <Group gap={5} class="flex gap-4">
               <Button variant="default">Log in</Button>
