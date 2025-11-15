@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web;
 
 use Illuminate\Http\Request;
 use App\Models\Card;
 use Inertia\Inertia;
+use App\Http\Controllers\Controller;
 
 class DeckbuilderController extends Controller
 {

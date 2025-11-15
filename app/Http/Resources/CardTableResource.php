@@ -4,11 +4,9 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Traits\IsCardResource;
 
 class CardTableResource extends JsonResource
 {
-    use IsCardResource;
 
     /**
      * Transform the resource into an array.
@@ -23,8 +21,12 @@ class CardTableResource extends JsonResource
             'number' => $this->number,
             'thumbnail_url' => $this->thumbnail_url,
             'rarity' => $this->rarity,
+            'feature' => $this->formattedFeature(),
+            'type' => ucfirst($this->type),
             'character_name' => $this->character_name,
-            'details' => $this->getDetailsForCard(),
+            'round' => $this->round,
+            'level' => $this->level,
+            // 'details' => $this->getDetailsForCard(),
         ];
     }
 }

@@ -3,7 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\Card;
-use App\Http\Controllers\DeckbuilderController;
+use App\Http\Controllers\Web\DeckbuilderController;
+use App\Http\Controllers\Web\UserController;
+use App\Http\Controllers\Web\CardTrackerController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -11,6 +13,4 @@ Route::get('/', function () {
 
 Route::get('/deckbuilder', [DeckbuilderController::class, 'show'])->name('deckbuilder');
 
-Route::get('/card-tracker', function(){
-    return Inertia::render('card-tracker', ['totalCards' => Card::count()]);
-})->name('card-tracker');
+Route::get('/card-tracker', [CardTrackerController::class, 'show'])->name('card-tracker');
