@@ -3,7 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Card;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,15 +15,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::firstOrCreate(
-            ['email' => 'test@example.com'],
+        User::firstOrCreate(['username' => 'admin'],
             [
-                'name' => 'Test User',
-                'password' => 'password',
-                'email_verified_at' => now(),
+                'password' => env('DEFAULT_PASSWORD'),
+                'role' => \App\Enums\UserRolesEnum::ADMIN->value
             ]
         );
+
+
+        if(Card::count() === 0){
+            Artisan::call('app:sync-card-data');
+        }
     }
 }
