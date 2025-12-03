@@ -4,6 +4,8 @@ import { NumberInput, MultiSelect} from '@mantine/core';
 import { DataTable } from 'mantine-datatable';
 import '@mantine/core/styles/NumberInput.css';
 import '@mantine/core/styles/Pagination.css';
+import CardDetailTags from '@/components/tcg-card-views/detail-tags';
+import CardTableMobileView from '@/components/tcg-card-views/card-table-mobile-view';
 
 export default function CardTracker({totalCards = 1, filters = []}) {
     const [cardList, setCardList] = useState([]);
@@ -23,6 +25,7 @@ export default function CardTracker({totalCards = 1, filters = []}) {
     return (
         <BaseLayout>
           <div className="h-full">
+            <div>Filters</div>
             <DataTable
               page={currentPage}
               height={'85vh'}
@@ -38,72 +41,50 @@ export default function CardTracker({totalCards = 1, filters = []}) {
               records={cardList}
               columns={[
                 {
+                  accessor: 'mobile',
+                  title:'',
+                  visibleMediaQuery: (theme) => `(max-width: ${theme.breakpoints.sm})`,
+                  render: (record) => <CardTableMobileView card={record} quantity="0"/>
+                },
+                {
                   accessor: 'number',
+                  visibleMediaQuery: (theme) => `(min-width: ${theme.breakpoints.md})`,
+                  width: '15vw',
                 },
                 {
                   accessor: 'thumbnail_url',
+                  width: '10vw',
                   title: 'Preview',
+                  visibleMediaQuery: (theme) => `(min-width: ${theme.breakpoints.md})`,
                   render: ({thumbnail_url, number}) => (
-                    <img className="w-auto h-auto max-w-24 max-h-24" src={thumbnail_url} alt={number + ' thumbnail'}/>
+                    <img className="mx-auto w-auto h-auto max-w-[8vw] max-h-[8vw]" src={thumbnail_url} alt={number + ' thumbnail'}/>
                   )
                 },
                 { 
                   accessor: 'formatted_name',
-                  title: 'Name' 
+                  title: 'Name',
+                  width: '20vw',
+                  visibleMediaQuery: (theme) => `(min-width: ${theme.breakpoints.md})`,
                 },
                 {
-                  accessor: 'feature',
-                  filter: (
-                    <MultiSelect
-                      label="Feature"
-                      data={filters.feature}
-                      value={selectedFeatures}
-                      onChange={setSelectedFeatures}
-                      clearable
-                    />
+                  accessor: 'details',
+                  title: 'Tags',
+                  visibleMediaQuery: (theme) => `(min-width: ${theme.breakpoints.md})`,
+                  render: ({details}) => (
+                    <CardDetailTags details={details}/>        
                   )
                 },
-                {
-                  accessor: 'rarity',
-                  filter: (
-                    <MultiSelect
-                      label="Rarity"
-                      data={filters.rarity}
-                      value={selectedRarities}
-                      onChange={setSelectedRarities}
-                      clearable
-                      searchable
-                    />
-                  )
-                },
-                {
-                  accessor: 'type'
-                },
-                {
-                  accessor: 'round',
-                },
-                {
-                  accessor: 'level'
-                },
-                // {
-                //   accessor: 'details',
-                //   title: 'Tags',
-                //   render: ({details}) => (
-                //     <div className="flex gap-2 w-auto">
-                //       {Object.entries(details).map(([label, value]) => (
-                //           <div className="tcg-card-display-tag">
-                //             <div className="text-xs opacity-50">{label}</div>
-                //             <div>{value}</div>
-                //           </div>
-                //       ))}
-                //       </div>
-                //   )
-                // },
                 {
                   accessor: 'qty',
                   title: 'Quantity',
+                  width: '10vw',
+                  visibleMediaQuery: (theme) => `(min-width: ${theme.breakpoints.md})`,
                   render: ({qty, number}) => (
-                    <NumberInput aria-label={number + ' quantity input'} min="0" value={qty ? qty : 0} className="w-20 md:w-24"/>
+                    <NumberInput 
+                      aria-label={number + ' quantity input'} 
+                      min="0" 
+                      value={qty ? qty : 0} 
+                      className="w-20 md:w-24 mx-auto"/>
                   )
                 }
               ]}

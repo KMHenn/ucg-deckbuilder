@@ -7,6 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CardTableResource extends JsonResource
 {
+    use \App\Support\Traits\CardResourceTrait;
 
     /**
      * Transform the resource into an array.
@@ -26,7 +27,7 @@ class CardTableResource extends JsonResource
             'character_name' => $this->character_name,
             'round' => $this->round,
             'level' => $this->level,
-            // 'details' => $this->getDetailsForCard(),
+            'details' => $this->getDetailsForCard(),
         ];
     }
 }

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->string('email')->unique()->nullable();
             $table->string('password');
-            $table->string('role')->default(\App\Enums\UserRolesEnum::USER->value);
+            $table->string('role')->default(\App\Support\Enums\UserRolesEnum::USER->value);
             $table->rememberToken();
             $table->timestamps();
         });

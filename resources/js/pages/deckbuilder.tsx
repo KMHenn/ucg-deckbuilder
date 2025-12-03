@@ -1,7 +1,7 @@
-import TcgCardDisplay from '@/components/tcg-card-display';
+import CardDisplay from '@/components/tcg-card-views/card-display';
 import BaseLayout from '../layouts/base-layout';
 import { useState, useEffect } from 'react';
-import TcgCardModal from '@/components/tcg-card-modal';
+import CardModal from '@/components/tcg-card-views/card-modal';
 import { useDisclosure } from '@mantine/hooks';
 import '@mantine/core/styles/Modal.css';
 // import Button from '@mui/material/Button';
@@ -74,7 +74,7 @@ export default function Deckbuilder({ totalPages = 1 }) {
                             </div>
                           <div className="h-fit grid grid-cols-2 xl:grid-cols-3 gap-2 xl:gap-4 mb-auto">
                             {deck.map(card => (
-                                <TcgCardDisplay 
+                                <CardDisplay 
                                     onUpdate={updateDeck}
                                     quantity={card.qty}
                                     card={card} 
@@ -94,7 +94,7 @@ export default function Deckbuilder({ totalPages = 1 }) {
                                 const qty = deckCard ? deckCard.qty : 0;
 
                                 /** @TODO why isn't the quantity showing in the modal when opened from the card list */
-                                return (<TcgCardDisplay 
+                                return (<CardDisplay 
                                     quantity={qty}
                                     onUpdate={updateDeck}
                                     card={card} 
@@ -110,12 +110,11 @@ export default function Deckbuilder({ totalPages = 1 }) {
                 </div>
             </div>
 
-            <TcgCardModal
+            <CardModal
                 onUpdate={updateDeck}
                 opened={modalOpened}
                 card={selectedCard}
-                onClose={close}>    
-            </TcgCardModal>
+                onClose={close}/>
         </BaseLayout>
     );
 }

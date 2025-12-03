@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         User::firstOrCreate(['username' => 'admin'],
             [
                 'password' => env('DEFAULT_PASSWORD'),
-                'role' => \App\Enums\UserRolesEnum::ADMIN->value
+                'role' => \App\Support\Enums\UserRolesEnum::ADMIN->value
             ]
         );
 

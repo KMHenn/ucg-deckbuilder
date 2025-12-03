@@ -2,11 +2,13 @@
 
 namespace App\Http\Resources;
 
+use App\Support\Traits\CardResourceTrait;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CardDisplayResource extends JsonResource
 {
+    use CardResourceTrait;
 
     /**
      * Transform the resource into an array.
@@ -35,29 +37,5 @@ class CardDisplayResource extends JsonResource
             'related_cards' => $this->whenNull($this->branch, $this->getRelatedCards()) ?? [],
             'details' => $this->getDetailsForCard(),
         ];
-    }
-
-    private function getDetailsForCard(): array{
-        $details = [
-            'Feature' => $this->formattedFeature(),
-            'Rarity' => $this->rarity,
-            'Participating Works' => $this->participating_works,
-            'Release' => $this->section === 'PR' ? $this->section : sprintf('%s-%s', $this->section, $this->bundle),
-        ];
-        if($this->feature === 'scene'){
-            return array_merge(
-                $details, 
-                ['Round' => 'Round ' . $this->round],
-            );
-        }
-
-        return array_merge(
-            $details, 
-            [
-                'Type' => ucfirst($this->type),
-                'Level' => 'Level ' . $this->level,
-                'Character' => $this->character_name,
-            ]
-        );
     }
 }

@@ -1,6 +1,6 @@
 import { useDisclosure } from '@mantine/hooks';
 import { Modal, Button } from '@mantine/core';
-import NumberInput from './inputs/number-input';
+import NumberInput from '../inputs/number-input';
 import { useState, useEffect } from 'react';
 
 const style = {
@@ -16,7 +16,7 @@ const style = {
   p: 4,
 };
 
-export default function TcgCardModal({card, opened, onUpdate, onClose}) {
+export default function CardModal({card, opened, onUpdate, onClose}) {
     if(!card){
         return null;
     }
