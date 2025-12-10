@@ -1,13 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-use App\Models\Card;
-use App\Http\Controllers\DeckbuilderController;
 use App\Http\Controllers\Api\CardController;
 
 
 Route::name('api')->group(function(){
-    Route::get('/cards', [CardController::class, 'show'])
-        ->name('cards');
+    Route::name('.cards')->prefix('cards')->group(function(){
+        Route::get('/', [CardController::class, 'show'])->name('.list');
+
+        Route::get('filters', [CardController::class, 'getFilters'])->name('.filters');
+    });
 });

@@ -2,13 +2,16 @@
 
 namespace App\Http\Resources;
 
-use App\Support\Traits\CardResourceTrait;
+use App\Support\Traits\IsCardResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @property Card $resource
+ */
 class CardDisplayResource extends JsonResource
 {
-    use CardResourceTrait;
+    use IsCardResource;
 
     /**
      * Transform the resource into an array.

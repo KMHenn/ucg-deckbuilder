@@ -6,26 +6,46 @@ import '@mantine/core/styles/NumberInput.css';
 import '@mantine/core/styles/Pagination.css';
 import CardDetailTags from '@/components/tcg-card-views/detail-tags';
 import CardTableMobileView from '@/components/tcg-card-views/card-table-mobile-view';
+import CardFilters from '@/components/tcg-card-views/card-filters';
 
-export default function CardTracker({totalCards = 1, filters = []}) {
+export default function CardTracker({totalCards = 1}) {
     const [cardList, setCardList] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [recordsPerPage, setRecordsPerPage] = useState(10);
+    const [filters, setFilters] = useState({});
+    const [selectedFilters, setSelectedFilters] = useState({});
 
-    const [selectedRarities, setSelectedRarities] = useState([]);
-    const [selectedFeatures, setSelectedFeatures] = useState([]);
+    useEffect(() => {
+        fetch(`/api/cards/filters`)
+            .then(response => response.json())
+            .then(json => setFilters(json.data))
+            .catch(error => console.error(error));
+    }, []);
         
     useEffect(() => {
-        fetch(`/api/cards?page=${currentPage}&per_page=${recordsPerPage}&format=table&rarities=${selectedRarities}`)
+        const filterQuery = Object.entries(selectedFilters)
+          .map(([key, vals]) => vals.length ? `${key}=${vals.join(',')}` : '')
+          .filter(Boolean)
+          .join('&');
+
+        // @TODO totalCards broken after filtering- not updating
+        fetch(`/api/cards?page=${currentPage}&per_page=${recordsPerPage}&format=table&${filterQuery}`)
             .then(response => response.json())
             .then(dataCollection => setCardList(dataCollection.data))
+            .then()
             .catch(error => console.error(error));
-    }, [currentPage, recordsPerPage, selectedRarities]);
+    }, [currentPage, recordsPerPage, selectedFilters]);
+  
     
     return (
         <BaseLayout>
           <div className="h-full">
-            <div>Filters</div>
+            <div>
+              <CardFilters
+                filters={filters}
+                selectedFilters={selectedFilters}
+                onChange={setSelectedFilters}/>
+            </div>
             <DataTable
               page={currentPage}
               height={'85vh'}
