@@ -23,13 +23,18 @@ export default function CardTracker({totalCards = 1}) {
     }, []);
         
     useEffect(() => {
-        const filterQuery = Object.entries(selectedFilters)
-          .map(([key, vals]) => vals.length ? `${key}=${vals.join(',')}` : '')
-          .filter(Boolean)
-          .join('&');
+        let cardListRequest = `/api/cards?page=${currentPage}&per_page=${recordsPerPage}`;
+        if(Object.keys(selectedFilters).length > 0){
+          const filterQuery = Object.entries(selectedFilters)
+            .map(([key, vals]) => vals.length ? `${key}=${vals.join(',')}` : '')
+            .filter(Boolean)
+            .join('&');
+
+          cardListRequest = cardListRequest + '&' + filterQuery;
+        }
 
         // @TODO totalCards broken after filtering- not updating
-        fetch(`/api/cards?page=${currentPage}&per_page=${recordsPerPage}&format=table&${filterQuery}`)
+        fetch(`${cardListRequest}`)
             .then(response => response.json())
             .then(dataCollection => setCardList(dataCollection.data))
             .then()
@@ -73,11 +78,11 @@ export default function CardTracker({totalCards = 1}) {
                 },
                 {
                   accessor: 'thumbnail_url',
-                  width: '10vw',
+                  width: '6vw',
                   title: 'Preview',
                   visibleMediaQuery: (theme) => `(min-width: ${theme.breakpoints.md})`,
                   render: ({thumbnail_url, number}) => (
-                    <img className="mx-auto w-auto h-auto max-w-[8vw] max-h-[8vw]" src={thumbnail_url} alt={number + ' thumbnail'}/>
+                    <img className="mx-auto w-auto h-auto max-w-[4vw] max-h-[4vw]" src={thumbnail_url} alt={number + ' thumbnail'}/>
                   )
                 },
                 { 

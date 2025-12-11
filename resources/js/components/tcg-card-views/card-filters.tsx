@@ -31,13 +31,12 @@ export default function CardFilters({filters, selectedFilters = {}, onChange}) {
             {Object.keys(selectedFilters).length > 0 ?
             <div className="flex flex-wrap gap-2 mb-2">
                 {/* @TODO not using pretty names for options, pill persists when empty */}
-                {Object.entries(selectedFilters).map(([key, values]) =>
-                    values.map((value) => {
+                {Object.entries(selectedFilters).map(([key, values]) => {
+                    let pills = values.map((value) => {
                         const colorClass = PILL_COLORS[key] || "bg-gray-300 text-gray-800";
 
                         return (<div className={`w-fit px-3 py-1 rounded-full text-sm flex items-center gap-1 ${colorClass}`}>
-                            <span key={`${key}-active-filters-${value}`} >
-                                {filters[key].label}: {value}</span>
+                            <span key={`${key}-active-filters-${value}`} >{value}</span>
                             <button
                                 onClick={() => {
                                     // Remove this value from the selectedFilters
@@ -52,7 +51,15 @@ export default function CardFilters({filters, selectedFilters = {}, onChange}) {
                                 </button>
                         </div>);
                     })
-                )}
+
+                    return (
+                        <div>
+                            <span>{filters[key].label}</span>
+                            <div className="flex flex-wrap w-fit gap-2">
+                            {pills}
+                            </div>
+                        </div>);
+                })}
             </div> : ''}
             
             <div className="flex ml-auto">
@@ -70,7 +77,7 @@ export default function CardFilters({filters, selectedFilters = {}, onChange}) {
                         onClick={() => setModal(false)}>
                     </div>
                     <div className="absolute left-0 right-0 w-max h-max  m-auto z-20">
-                        <div className="w-max h-max m-auto bg-gray-400 p-5 rounded-lg">
+                        <div className="w-[80vw] h-max m-auto bg-gray-400 p-5 grid grid-cols-2 gap-x-4 gap-y-2">
                             {Object.entries(filters).map(([key, config]) => (
                                 <div key={key + `-filter`}>
                                     <MultiSelect

@@ -21,30 +21,34 @@ class CardController extends Controller
      * @response array{data: CardDisplayResource[]}
      */
     public function show(CardRequest $request){
-        $format = $request->input('format', FORMAT_CARDS);
+        $request->validated();
+        // $format = $request->input('format', FORMAT_CARDS);
         $perPage = $request->input('per_page', 12);
         $pageNumber = $request->input('page', 1);
-        $participatingWorks = $request->input('participating_works');
-        $rarities = $request->input('rarities', null);
-        
+
         // Exclude illegal cards
         $query = Card::whereNull('ascended_date');
 
-        if(!is_null($rarities)){
-            $query = $query->whereIn('rarity', explode(',',$rarities));
-        }
+        foreach($request->all() as $key => $filter){
+            if(in_array($key, ['page','per_page'])){
+                continue;
+            }
 
-        if(!is_null($participatingWorks)){
-            $query->whereIn('participating_works', explode(',', $participatingWorks));
+            if($key === 'section_bundle'){
+                // @TODO special handling
+                continue;
+            }
+
+            $query = $query->whereIn($key, explode(',', $filter));
         }
 
         $query = $query->offset($perPage * ($pageNumber - 1))
             ->limit($perPage)
             ->get();
 
-        if($format === FORMAT_TABLE){
-            return CardTableResource::collection($query);
-        }
+        // if($format === FORMAT_TABLE){
+        //     return CardTableResource::collection($query);
+        // }
 
         return CardDisplayResource::collection($query);
     }
@@ -69,6 +73,7 @@ class CardController extends Controller
         $filters = collect($standardFilterColumns)->mapWithKeys(function ($filter) {
             // @TODO can this be refactored to leverage the formatting functions in Card.php?
             $values = Card::distinct($filter)
+                ->orderBy($filter)
                 ->pluck($filter)
                 ->map(fn ($value) => [
                     'value' => (string)$value ?? '',
