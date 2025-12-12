@@ -48,8 +48,8 @@ export default function CardTracker({totalCards = 1}) {
     
     return (
         <BaseLayout>
-          <div className="h-full w-full grow flex gap-2">
-            <div className="flex flex-col grow-0 w-[15vw]">
+          <div className="h-full w-full grow flex flex-col gap-2">
+            <div className="flex w-full">
               <CardFilters
                 filters={filters}
                 selectedFilters={selectedFilters}

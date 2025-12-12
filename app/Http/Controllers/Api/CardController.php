@@ -106,6 +106,12 @@ class CardController extends Controller
                     'label' => $filterLabel . ' ' . ucwords(strtolower(str_replace('_', ' ', (string)$value)))
                 ]);
             }
+            elseif($filter === 'rarity'){
+                                $values = $values->map(fn ($value) => [
+                    'value' => (string)$value ?? '',
+                    'label' => str_replace('_', ' ', (string)$value)
+                ]);
+            }
             else{
                 $values = $values->map(fn ($value) => [
                     'value' => (string)$value ?? '',

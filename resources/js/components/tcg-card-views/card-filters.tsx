@@ -15,52 +15,37 @@ const PILL_COLORS = {
 
 export default function CardFilters({filters, selectedFilters = {}, onChange}) {
     const [modal, setModal] = useState(false);
-    const [showFilters, setShowFilters] = useState(true);
 
     if(!filters){
       return null;
     }
 
     return (
-        <div className="flex flex-col justify-between gap-2 mb-4">
-            <div className="">
-                {!showFilters && 
-                <Button rightSection={<IconAdjustmentsAlt />} onClick={() => setShowFilters(true)}>
-                    Show Filters
+        <div className="flex flex-col w-full mb-2">
+            <div className="flex items-center justify-end">
+                <Button rightSection={<IconAdjustmentsAlt />} onClick={() => setModal(true)}>
+                    Filters
                 </Button>
-}
-                { showFilters && 
-                <Button rightSection={<IconX />} onClick={() => setShowFilters(false)}>Hide Filters</Button>
-}
             </div>
-            {showFilters && 
-            <div className="flex flex-col gap-4 w-full">
-                {Object.entries(filters).map(([key, config]) => (
-                    <div key={key + `-filter`} className="w-full">
-                        <MultiSelect
-                            // label={config.label}
-                            placeholder={"Select a " + config.label}
-                            data={config.options}
-                            value={selectedFilters[key] || []}
-                            onChange={(values) => onChange?.((prev) => ({
-                                ...prev,
-                                [key]: values
-                            }))}
-                            searchable
-                            clearable/>
-                    </div>
-                ))}
-            </div>
-}
 
-            
-            <div className="ml-auto">
-                <ActionIcon
-                className="my-auto"
-                onClick={() => setModal(true)}>
-                    <IconAdjustmentsAlt />
-                </ActionIcon>
-                
+            <div className="flex flex-wrap gap-2 w-full">
+                {Object.entries(selectedFilters).map(([filterKey, values]) => {
+                    if(!values || values.length === 0){
+                        return null;
+                    }
+
+                    const colorClass = PILL_COLORS[filterKey] || "bg-gray-300 text-gray-800";
+                    const labelText = values.map((val) => filters[filterKey]?.options?.find((o) => o.value === val)?.label || val).join(", ");
+
+                    {/* @TODO Participating Works looks stupid with how long some titles are */}
+                    return (
+                        <div key={filterKey}
+                            className={`px-3 py-1 rounded-full text-sm flex flex-wrap h-fit items-center gap-2 ${colorClass}`}>
+                            <div><span className="font-bold">{filters[filterKey].label}</span>: {labelText}</div>
+                        </div>
+                        );
+                    }
+                )}
             </div>
 
             {modal && 
@@ -69,7 +54,7 @@ export default function CardFilters({filters, selectedFilters = {}, onChange}) {
                         onClick={() => setModal(false)}>
                     </div>
                     <div className="absolute left-0 right-0 w-max h-max  m-auto z-20">
-                        <div className="w-[80vw] md:w-[40vw] h-max m-auto bg-white p-5 grid gap-x-4 gap-y-2 rounded-md">
+                        <div className="w-[80vw] md:w-[50vw] h-max m-auto bg-white p-5 grid gap-x-4 gap-y-2 rounded-md">
                             <div className="flex justify-between">
                                 <h1 className="text-lg font-bold">Filters</h1>
                                 <ActionIcon className="ml-auto" onClick={() => setModal(false)}>
@@ -79,6 +64,7 @@ export default function CardFilters({filters, selectedFilters = {}, onChange}) {
                             {Object.entries(filters).map(([key, config]) => (
                                 <div key={key + `-filter`}>
                                     <MultiSelect
+                                        className="max-w-[75vw] md:max-w-[45vw]"
                                         label={config.label}
                                         placeholder={"Select a " + config.label}
                                         data={config.options}

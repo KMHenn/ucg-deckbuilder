@@ -9,7 +9,9 @@ Route::name('api')->group(function(){
         Route::name('.cards')->prefix('cards')->group(function(){
             Route::get('/', [CardController::class, 'index'])->name('.index');
             Route::get('/filters', [CardController::class, 'getFilters'])->name('.filters');
+            
             Route::get('/{card}', [CardController::class, 'show'])->name('.show');
+            Route::post('/{card}/quantity', [CardController::class, 'updateQuantity'])->name('.quantity');
         });
     });
 });
