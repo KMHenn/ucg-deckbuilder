@@ -6,6 +6,7 @@ import '@mantine/core/styles.css';
 import 'mantine-datatable/styles.layer.css';
 
 import { Burger, Container, Group, Button} from '@mantine/core';
+import Login from '@/components/auth/login';
 
 export default function BaseLayout({ children }) {
   // const { auth } = usePage<SharedData>().props;
@@ -51,28 +52,7 @@ export default function BaseLayout({ children }) {
             </Group>
 
             {loginModal &&
-            <>
-                    <div className="absolute top-0 left-0 right-0 bottom-0 bg-black opacity-60 z-10"  
-                        onClick={() => setModal(false)}>
-                    </div>
-                    <div className="absolute left-0 right-0 w-max h-max  m-auto z-20">
-                        <div className="w-[80vw] md:w-[50vw] h-max m-auto bg-white p-5 grid gap-x-4 gap-y-2 rounded-md">
-                          <form onSubmit={handleLogin}>
-                            <TextInput
-                            name="username"
-                            label="Username"
-                            placeholder="Username"
-                            required/>
-                            <PasswordInput
-                            name="password"
-                            label="Password"
-                            placeholder="Password"
-                            required/>
-                            <input type="submit" value="Log In"/>
-                          </form>
-                        </div>
-                    </div>
-                </>
+            <Login/>
             }
 
           </Container>
