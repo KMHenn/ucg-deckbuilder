@@ -57,7 +57,7 @@ export default function Deckbuilder({ totalPages = 1 }) {
     const totalCards = deck.reduce((sum, card) => sum + (card.qty || 0), 0);
 
     useEffect(() => {
-        fetch(`/api/cards?page=${currentPage}&format=cards`)
+        fetch(`/api/v1/cards?page=${currentPage}&format=cards`)
             .then(response => response.json())
             .then(dataCollection => setCardList(dataCollection.data))
             .catch(error => console.error(error));

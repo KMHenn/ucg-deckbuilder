@@ -5,52 +5,73 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Requests\CardRequest;
 use App\Models\Card;
-use App\Http\Resources\CardDisplayResource;
-use App\Http\Resources\CardTableResource;
+use App\Http\Resources\CardResource;
 use App\Http\Controllers\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-const FORMAT_CARDS = 'cards';
-const FORMAT_TABLE = 'table';
 
 class CardController extends Controller
 {
     /**
      * GET Card Listing
      * 
-     * @response array{data: CardDisplayResource[]}
+     * @response array{data: CardResource[]}
      */
-    public function show(CardRequest $request){
-        $request->validated();
-        // $format = $request->input('format', FORMAT_CARDS);
-        $perPage = $request->input('per_page', 12);
-        $pageNumber = $request->input('page', 1);
+    public function index(CardRequest $request){
+        $perPage = $request->validated('per_page', 12);
+        $pageNumber = $request->validated('page', 1);
+        $query = Card::query();
 
-        // Exclude illegal cards
-        $query = Card::whereNull('ascended_date');
+        // Maybe filter illegal cards
+        $includeAscended = $request->validated('include_ascended', false);
+        if(!$includeAscended){
+            $query = $query->whereNull('ascended_date');
+        }
+        else{
+            $query = $query->whereNotNull('ascended_date');
+        }
 
-        foreach($request->all() as $key => $filter){
+        foreach($request->validated() as $key => $filter){
             if(in_array($key, ['page','per_page'])){
                 continue;
             }
 
+            // Special scenario since these filter options are compounds
             if($key === 'section_bundle'){
-                // @TODO special handling
+                foreach($filter as $sectionBundle){
+                    [$section, $bundle] = array_pad(explode('-', $sectionBundle), 2, null);
+                    
+                    $query->where(function($q) use ($section, $bundle){
+                        $q->where('section', $section);
+                        
+                        if(!is_null($bundle)){
+                            $q->where('bundle', $bundle);
+                        }
+                        else{
+                            $q->whereNull('bundle');
+                        }
+                    });
+                }
+                
                 continue;
             }
-
-            $query = $query->whereIn($key, explode(',', $filter));
+            
+            $query = $query->whereIn($key, $filter);
         }
 
         $query = $query->offset($perPage * ($pageNumber - 1))
             ->limit($perPage)
             ->get();
+        return CardResource::collection($query);
+    }
 
-        // if($format === FORMAT_TABLE){
-        //     return CardTableResource::collection($query);
-        // }
-
-        return CardDisplayResource::collection($query);
+    /**
+     * GET Card Details
+     * 
+     * @response array{data: CardResource}
+     */
+    public function show(Card $card, Request $request){
+        return new CardResource($card);
     }
 
     /**
@@ -71,20 +92,32 @@ class CardController extends Controller
         ];
 
         $filters = collect($standardFilterColumns)->mapWithKeys(function ($filter) {
+            $filterLabel = ucwords(str_replace('_', ' ', $filter));
+
             // @TODO can this be refactored to leverage the formatting functions in Card.php?
             $values = Card::distinct($filter)
+                ->whereNotNull($filter)
                 ->orderBy($filter)
-                ->pluck($filter)
-                ->map(fn ($value) => [
+                ->pluck($filter);
+
+            if(in_array($filter, ['level', 'round'])){
+                $values = $values->map(fn ($value) => [
                     'value' => (string)$value ?? '',
-                    'label' => ucwords(strtolower(str_replace('_', ' ', (string)$value))) ?? 'None'
-                ])
-                ->values()
-                ->toArray();
+                    'label' => $filterLabel . ' ' . ucwords(strtolower(str_replace('_', ' ', (string)$value)))
+                ]);
+            }
+            else{
+                $values = $values->map(fn ($value) => [
+                    'value' => (string)$value ?? '',
+                    'label' => ucwords(strtolower(str_replace('_', ' ', (string)$value)))
+                ]);
+            }
+            
+            $values = $values->values()->toArray();
 
             return [
                 $filter => [
-                    'label' =>  ucwords(str_replace('_', ' ', $filter)),
+                    'label' =>  $filterLabel,
                     'options' => $values
                 ]
             ];

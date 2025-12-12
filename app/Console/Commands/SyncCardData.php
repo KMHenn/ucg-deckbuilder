@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Card;
-use App\Models\Errata;
 
 class SyncCardData extends Command
 {
@@ -50,7 +49,7 @@ class SyncCardData extends Command
                     ];
                 }
 
-                if($card['section'] === 'EXD' && $card['bundle'] === '01'){
+                if($card['section'] === 'EXD' && $card['bundle_version'] === '01'){
                     // The data doesn't include these with Rising, but we know they are by nature of the actual release
                     $card['detail']['participating_works'] = 'Ultraman: Rising';
                 }

@@ -1,4 +1,4 @@
-import CardDetailTags from '@/components/tcg-card-views/detail-tags';
+import CardDetailTags from '@/components/tcg-card-views/tags';
 
 export default function CardDisplay({ card, quantity, onClick }) {
     return (

@@ -4,7 +4,7 @@ import { NumberInput, MultiSelect} from '@mantine/core';
 import { DataTable } from 'mantine-datatable';
 import '@mantine/core/styles/NumberInput.css';
 import '@mantine/core/styles/Pagination.css';
-import CardDetailTags from '@/components/tcg-card-views/detail-tags';
+import Tags from '@/components/tcg-card-views/tags';
 import CardTableMobileView from '@/components/tcg-card-views/card-table-mobile-view';
 import CardFilters from '@/components/tcg-card-views/card-filters';
 
@@ -16,17 +16,21 @@ export default function CardTracker({totalCards = 1}) {
     const [selectedFilters, setSelectedFilters] = useState({});
 
     useEffect(() => {
-        fetch(`/api/cards/filters`)
+        fetch(`/api/v1/cards/filters`)
             .then(response => response.json())
             .then(json => setFilters(json.data))
             .catch(error => console.error(error));
     }, []);
         
     useEffect(() => {
-        let cardListRequest = `/api/cards?page=${currentPage}&per_page=${recordsPerPage}`;
+        let cardListRequest = `/api/v1/cards?page=${currentPage}&per_page=${recordsPerPage}`;
         if(Object.keys(selectedFilters).length > 0){
           const filterQuery = Object.entries(selectedFilters)
-            .map(([key, vals]) => vals.length ? `${key}=${vals.join(',')}` : '')
+            .map(([key, vals]) =>
+                vals.length
+                  ? vals.map((v) => `${key}[]=${encodeURIComponent(v)}`).join("&")
+                  : ""
+            )
             .filter(Boolean)
             .join('&');
 
@@ -44,13 +48,14 @@ export default function CardTracker({totalCards = 1}) {
     
     return (
         <BaseLayout>
-          <div className="h-full">
-            <div>
+          <div className="h-full w-full grow flex gap-2">
+            <div className="flex flex-col grow-0 w-[15vw]">
               <CardFilters
                 filters={filters}
                 selectedFilters={selectedFilters}
                 onChange={setSelectedFilters}/>
             </div>
+            
             <DataTable
               page={currentPage}
               height={'85vh'}
@@ -92,11 +97,11 @@ export default function CardTracker({totalCards = 1}) {
                   visibleMediaQuery: (theme) => `(min-width: ${theme.breakpoints.md})`,
                 },
                 {
-                  accessor: 'details',
+                  accessor: 'tags',
                   title: 'Tags',
                   visibleMediaQuery: (theme) => `(min-width: ${theme.breakpoints.md})`,
-                  render: ({details}) => (
-                    <CardDetailTags details={details}/>        
+                  render: ({tags}) => (
+                    <Tags tags={tags}/>        
                   )
                 },
                 {
@@ -113,7 +118,7 @@ export default function CardTracker({totalCards = 1}) {
                   )
                 }
               ]}
-    />
+            />
           </div>
         </BaseLayout>
     );

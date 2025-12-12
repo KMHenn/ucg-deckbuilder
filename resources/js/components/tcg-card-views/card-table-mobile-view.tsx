@@ -1,4 +1,4 @@
-import CardDetailTags from '@/components/tcg-card-views/detail-tags';
+import Tags from '@/components/tcg-card-views/tags';
 import { NumberInput, MultiSelect} from '@mantine/core';
 
 export default function CardTableMobileView({card, quantity}){
@@ -19,7 +19,7 @@ export default function CardTableMobileView({card, quantity}){
     
             <div className="flex flex-col gap-4 text-black">
                 
-                <CardDetailTags details={card.details}/>      
+                <Tags tags={card.tags}/>      
           </div>
           <div>
             <NumberInput 

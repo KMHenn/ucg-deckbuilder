@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { MultiSelect, TextInput, ActionIcon} from '@mantine/core';
-import {IconAdjustmentsAlt } from '@tabler/icons-react';
+import { MultiSelect, TextInput, ActionIcon, Button} from '@mantine/core';
+import {IconAdjustmentsAlt, IconX } from '@tabler/icons-react';
 
 const PILL_COLORS = {
   rarity:   "bg-purple-200 text-purple-800",
@@ -15,54 +15,46 @@ const PILL_COLORS = {
 
 export default function CardFilters({filters, selectedFilters = {}, onChange}) {
     const [modal, setModal] = useState(false);
+    const [showFilters, setShowFilters] = useState(true);
 
     if(!filters){
       return null;
     }
 
     return (
-        <div className="flex justify-between gap-2 mb-4">
-            {/* <div>
-                <TextInput
-                    placeholder="Search by name"
-                />
-            </div> */}
+        <div className="flex flex-col justify-between gap-2 mb-4">
+            <div className="">
+                {!showFilters && 
+                <Button rightSection={<IconAdjustmentsAlt />} onClick={() => setShowFilters(true)}>
+                    Show Filters
+                </Button>
+}
+                { showFilters && 
+                <Button rightSection={<IconX />} onClick={() => setShowFilters(false)}>Hide Filters</Button>
+}
+            </div>
+            {showFilters && 
+            <div className="flex flex-col gap-4 w-full">
+                {Object.entries(filters).map(([key, config]) => (
+                    <div key={key + `-filter`} className="w-full">
+                        <MultiSelect
+                            // label={config.label}
+                            placeholder={"Select a " + config.label}
+                            data={config.options}
+                            value={selectedFilters[key] || []}
+                            onChange={(values) => onChange?.((prev) => ({
+                                ...prev,
+                                [key]: values
+                            }))}
+                            searchable
+                            clearable/>
+                    </div>
+                ))}
+            </div>
+}
 
-            {Object.keys(selectedFilters).length > 0 ?
-            <div className="flex flex-wrap gap-2 mb-2">
-                {/* @TODO not using pretty names for options, pill persists when empty */}
-                {Object.entries(selectedFilters).map(([key, values]) => {
-                    let pills = values.map((value) => {
-                        const colorClass = PILL_COLORS[key] || "bg-gray-300 text-gray-800";
-
-                        return (<div className={`w-fit px-3 py-1 rounded-full text-sm flex items-center gap-1 ${colorClass}`}>
-                            <span key={`${key}-active-filters-${value}`} >{value}</span>
-                            <button
-                                onClick={() => {
-                                    // Remove this value from the selectedFilters
-                                    onChange((prev) => ({
-                                    ...prev,
-                                    [key]: prev[key].filter((v) => v !== value),
-                                    }));
-                                }}
-                                className={`font-bold ml-1 ${colorClass}`}
-                                >
-                                x
-                                </button>
-                        </div>);
-                    })
-
-                    return (
-                        <div>
-                            <span>{filters[key].label}</span>
-                            <div className="flex flex-wrap w-fit gap-2">
-                            {pills}
-                            </div>
-                        </div>);
-                })}
-            </div> : ''}
             
-            <div className="flex ml-auto">
+            <div className="ml-auto">
                 <ActionIcon
                 className="my-auto"
                 onClick={() => setModal(true)}>
@@ -77,12 +69,18 @@ export default function CardFilters({filters, selectedFilters = {}, onChange}) {
                         onClick={() => setModal(false)}>
                     </div>
                     <div className="absolute left-0 right-0 w-max h-max  m-auto z-20">
-                        <div className="w-[80vw] h-max m-auto bg-gray-400 p-5 grid grid-cols-2 gap-x-4 gap-y-2">
+                        <div className="w-[80vw] md:w-[40vw] h-max m-auto bg-white p-5 grid gap-x-4 gap-y-2 rounded-md">
+                            <div className="flex justify-between">
+                                <h1 className="text-lg font-bold">Filters</h1>
+                                <ActionIcon className="ml-auto" onClick={() => setModal(false)}>
+                                    <IconX />
+                                </ActionIcon>
+                            </div>
                             {Object.entries(filters).map(([key, config]) => (
                                 <div key={key + `-filter`}>
                                     <MultiSelect
                                         label={config.label}
-                                        placeholder={"Select " + config.label}
+                                        placeholder={"Select a " + config.label}
                                         data={config.options}
                                         value={selectedFilters[key] || []}
                                         onChange={(values) => onChange?.((prev) => ({
@@ -97,7 +95,6 @@ export default function CardFilters({filters, selectedFilters = {}, onChange}) {
                     </div>
                 </>
             }
-
         </div>
     );
 }

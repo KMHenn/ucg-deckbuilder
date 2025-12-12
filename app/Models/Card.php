@@ -94,6 +94,14 @@ class Card extends Model
         };
     }
 
+    public function formattedSectionBundle(): string{
+        if($this->section === 'PR'){
+            return $this->section;
+        }
+
+        return sprintf('%s-%s', $this->section, $this->bundle);
+    }
+
     private function getBaseIdentifier(): string{
         if(!is_null($this->bundle)){
             return sprintf('%s%s-%s', $this->section, $this->bundle,$this->serial);

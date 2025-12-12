@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\ValidSectionAndBundle;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CardRequest extends FormRequest
@@ -14,17 +15,33 @@ class CardRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // 'format' => ['nullable'],
             'per_page' => ['numeric', 'integer', 'min:1'],
             'page_number' => ['numeric', 'integer', 'min:1'],
-            'participating_works' => ['nullable', 'exists:cards'],
-            'rarity' => ['nullable','exists:cards'],
-            'feature' => ['nullable', 'exists:cards'],
-            'level' => ['nullable', 'exists:cards'],
-            'round' => ['nullable', 'exists:cards'],
-            'character_name' => ['nullable', 'exists:cards'],
-            'type' => ['nullable', 'exists:cards']
+            'include_ascended' => ['nullable','boolean'],
 
+            'participating_works' => ['nullable', 'array'],
+            'participating_works.*' => ['string', 'exists:cards,participating_works'],
+
+            'rarity' => ['nullable', 'array'],
+            'rarity.*' => ['string', 'exists:cards,rarity'],
+
+            'feature' => ['nullable', 'array'],
+            'feature.*' => ['string', 'exists:cards,feature'],
+
+            'level' => ['nullable', 'array'],
+            'level.*' => ['string', 'exists:cards,level'],
+
+            'round' => ['nullable', 'array'],
+            'round.*' => ['string', 'exists:cards,round'],
+
+            'character_name' => ['nullable', 'array'],
+            'character_name.*' => ['string', 'exists:cards,character_name'],
+
+            'type' => ['nullable', 'array'],
+            'type.*' => ['string', 'exists:cards,type'],
+
+            'section_bundle' => ['nullable', 'array'],
+            'section_bundle.*' => ['string', new ValidSectionAndBundle()]
         ];
     }
 }
