@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
     public function login(Request $request): JsonResponse{
+            dd([
+        'session_id' => $request->session()->getId(),
+        'session_token' => $request->session()->token(),
+        'header_xsrf_token' => $request->header('X-XSRF-TOKEN'),
+        'cookies' => $request->cookies->all(),
+    ]);
         $credentials = $request->validate([
             'username' => 'required|string|exists:users,username',
             'password' => 'required|string',

@@ -7,6 +7,7 @@ import 'mantine-datatable/styles.layer.css';
 
 import { Burger, Container, Group, Button} from '@mantine/core';
 import Login from '@/components/auth/login';
+import Register from '@/components/auth/register';
 
 export default function BaseLayout({ children }) {
   // const { auth } = usePage<SharedData>().props;
@@ -18,9 +19,8 @@ export default function BaseLayout({ children }) {
 
   const [opened, { toggle }] = useDisclosure(false);
   const [active, setActive] = useState(links[0].link);
-  const [loginModal, setLoginModal] = useState(false);
-  const [loginError, setLoginError] = useState('');
-  const [signupModal, setSignupModal] = useState(false);
+  const [loginOpened, login] = useDisclosure(false);
+  const [registerOpened, register] = useDisclosure(false);
 
   return (
     <MantineProvider>
@@ -45,15 +45,18 @@ export default function BaseLayout({ children }) {
             </Group>
 
             <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" />
+            <Group gap="md">
+                <Button variant="subtle" onClick={register.open}>
+                    Register
+                </Button>
 
-            <Group gap={5} class="flex gap-4">
-              <Button variant="default" onClick={() => setLoginModal(true)} >Log in</Button>
-              <Button onClick={() => setSignupModal(true)}>Sign up</Button>
+                <Button variant="filled" onClick={login.open}>
+                    Login
+                </Button>
             </Group>
 
-            {loginModal &&
-            <Login/>
-            }
+            <Login opened={loginOpened} onClose={login.close} />
+            <Register opened={registerOpened} onClose={register.close} />
 
           </Container>
         </header>

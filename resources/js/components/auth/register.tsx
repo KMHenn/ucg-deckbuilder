@@ -8,9 +8,10 @@ import {
     Stack,
 } from "@mantine/core";
 
-export default function LoginModal({ opened, onClose }) {
+export default function Register({ opened, onClose }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [passwordConfirmation, setPasswordConfirmation] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -27,18 +28,16 @@ export default function LoginModal({ opened, onClose }) {
         setLoading(true);
 
         try {
-            // Step 1 — CSRF cookie
+            // Step 1 — Get CSRF cookie
             await fetch("/sanctum/csrf-cookie", {
                 method: "GET",
                 credentials: "include",
             });
 
-            // Step 2 — get XSRF token
             const xsrf = getCookie("XSRF-TOKEN");
-            console.log('XSRF: ' + xsrf);
 
-            // Step 3 — Login request
-            const response = await fetch("/auth/login", {
+            // Step 2 — Register request
+            const response = await fetch("/api/v1/auth/register", {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -48,21 +47,24 @@ export default function LoginModal({ opened, onClose }) {
                 body: JSON.stringify({
                     username,
                     password,
+                    password_confirmation: passwordConfirmation,
                 }),
             });
 
             if (!response.ok) {
-                setError("Invalid username or password.");
+                const txt = await response.text();
+                console.log(txt);
+                setError("Registration failed. Check your details.");
                 setLoading(false);
                 return;
             }
 
-            // Close modal and refresh UI
+            // Auto-login + reload
             onClose();
             window.location.reload();
-        } catch (err) {
-            console.error(err);
-            setError("Something went wrong. Please try again.");
+        } catch (e) {
+            console.error(e);
+            setError("Something went wrong.");
             setLoading(false);
         }
     };
@@ -71,7 +73,7 @@ export default function LoginModal({ opened, onClose }) {
         <Modal
             opened={opened}
             onClose={onClose}
-            title="Log in"
+            title="Register"
             centered
             radius="lg"
         >
@@ -79,7 +81,7 @@ export default function LoginModal({ opened, onClose }) {
                 <Stack gap="md">
                     <TextInput
                         label="Username"
-                        placeholder="Your username"
+                        placeholder="Choose a username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         required
@@ -95,6 +97,15 @@ export default function LoginModal({ opened, onClose }) {
                         radius="md"
                     />
 
+                    <PasswordInput
+                        label="Confirm Password"
+                        placeholder="Repeat password"
+                        value={passwordConfirmation}
+                        onChange={(e) => setPasswordConfirmation(e.target.value)}
+                        required
+                        radius="md"
+                    />
+
                     {error && (
                         <Alert color="red" radius="md">
                             {error}
@@ -102,7 +113,7 @@ export default function LoginModal({ opened, onClose }) {
                     )}
 
                     <Button type="submit" radius="md" loading={loading} fullWidth>
-                        Log in
+                        Create account
                     </Button>
                 </Stack>
             </form>
