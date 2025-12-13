@@ -4,13 +4,22 @@ import { useDisclosure } from '@mantine/hooks';
 import { MantineProvider, TextInput, PasswordInput } from '@mantine/core';
 import '@mantine/core/styles.css';
 import 'mantine-datatable/styles.layer.css';
+import { useAuth } from '../auth/auth-context';
 
-import { Burger, Container, Group, Button} from '@mantine/core';
+import { Burger, Container, Group, Button, Text} from '@mantine/core';
 import Login from '@/components/auth/login';
 import Register from '@/components/auth/register';
 
 export default function BaseLayout({ children }) {
   // const { auth } = usePage<SharedData>().props;
+    const { user, logout, loading } = useAuth();
+
+    if(!user){
+      console.log('no user logged in');
+    }
+    else{
+    console.log('user: ' + user.username);
+    }
   const links = [
     { link: '/', label: 'Home' },
     { link: '/deckbuilder', label: 'Deckbuilder' },
@@ -45,6 +54,15 @@ export default function BaseLayout({ children }) {
             </Group>
 
             <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" />
+
+            { user ? (        
+              <Group>
+                  <Text size="sm">{user.username}</Text>
+                  <Button size="xs" variant="outline" onClick={logout}>
+                    Logout
+                  </Button>
+              </Group>) : (
+                <>
             <Group gap="md">
                 <Button variant="subtle" onClick={register.open}>
                     Register
@@ -57,6 +75,8 @@ export default function BaseLayout({ children }) {
 
             <Login opened={loginOpened} onClose={login.close} />
             <Register opened={registerOpened} onClose={register.close} />
+            </>
+            )}
 
           </Container>
         </header>

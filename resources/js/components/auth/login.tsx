@@ -7,62 +7,37 @@ import {
     Alert,
     Stack,
 } from "@mantine/core";
+import {api} from '../../lib/api';
 
 export default function LoginModal({ opened, onClose }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+    const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
-    const getCookie = (name) => {
-        return document.cookie
-            .split("; ")
-            .find((row) => row.startsWith(name + "="))
-            ?.split("=")[1];
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError("");
+   const handleSubmit = async () => {
+    console.log('starting login attempt');
         setLoading(true);
+        setError(null);
 
         try {
-            // Step 1 — CSRF cookie
-            await fetch("/sanctum/csrf-cookie", {
-                method: "GET",
-                credentials: "include",
+            // Get CSRF cookie
+            await api.get('/sanctum/csrf-cookie');
+            console.log('CSRF got');
+
+            // Login
+            console.log('logging in');
+            const res = await api.post('/login', {
+                username,
+                password,
             });
 
-            // Step 2 — get XSRF token
-            const xsrf = getCookie("XSRF-TOKEN");
-            console.log('XSRF: ' + xsrf);
-
-            // Step 3 — Login request
-            const response = await fetch("/auth/login", {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-XSRF-TOKEN": xsrf ?? "",
-                },
-                body: JSON.stringify({
-                    username,
-                    password,
-                }),
-            });
-
-            if (!response.ok) {
-                setError("Invalid username or password.");
-                setLoading(false);
-                return;
-            }
-
-            // Close modal and refresh UI
-            onClose();
-            window.location.reload();
-        } catch (err) {
-            console.error(err);
-            setError("Something went wrong. Please try again.");
+            console.log('Logged in user:', res.data.user);
+            // update global auth state here
+        } catch (err: any) {
+            console.log(err.response?.data?.message ?? 'unknown error');
+            setError(err.response?.data?.message ?? 'Login failed');
+        } finally {
             setLoading(false);
         }
     };

@@ -37,7 +37,7 @@ export default function Register({ opened, onClose }) {
             const xsrf = getCookie("XSRF-TOKEN");
 
             // Step 2 — Register request
-            const response = await fetch("/api/v1/auth/register", {
+            const response = await fetch("/register", {
                 method: "POST",
                 credentials: "include",
                 headers: {
