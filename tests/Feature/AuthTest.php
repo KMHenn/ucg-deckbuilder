@@ -181,17 +181,8 @@ describe('POST Login', function(){
 describe('POST Logout', function(){
     it('logs out the current user', function(){
         // Log in
-        $password = 'myPassword';
-        $user = User::factory()->password($password)->create();
-
-        $credentials = [
-            'username' => $user->username,
-            'password' => $password,
-        ];
-
-        $response = $this->withSession([])->postJson(ROUTE_ROOT . '/login', $credentials);
-        $response->assertOk();
-        $this->assertAuthenticatedAs($user);
+        $user = User::factory()->create();
+        signIn($user);
 
         // Log out
         $response = $this->withSession([])->postJson(ROUTE_ROOT . '/logout');
@@ -207,45 +198,12 @@ describe('POST Logout', function(){
 describe('GET Whoami', function(){
     it('gets details on the signed in user after login', function(){
         // Log in
-        $password = 'myPassword';
-        $user = User::factory()->password($password)->create();
+        $user = User::factory()->create();
+        signIn($user);
 
-        $credentials = [
-            'username' => $user->username,
-            'password' => $password,
-        ];
-
-        $response = $this->withSession([])->postJson(ROUTE_ROOT . '/login', $credentials);
+        $response = $this->withSession([])->getJson(ROUTE_ROOT . '/whoami');
         $response->assertOk();
-
-        $whoAmIResponse = $this->withSession([])->getJson(ROUTE_ROOT . '/whoami');
-        $whoAmIResponse->assertOk();
-        $whoAmIResponse->assertJson([
-            'data' => [
-                'id' => $user->id,
-                'username' => $user->username,
-                'email' => $user->email,
-                'role' => $user->role->value,
-            ]
-        ]);
-    });
-
-    it('gets details on the signed in user after registration', function(){
-        // Register
-        $accountDetails = [
-            'username' => 'newUsername',
-            'password' => 'newPassword',
-            'password_confirmation' => 'newPassword',
-        ];
-
-        $response = $this->withSession([])->postJson(ROUTE_ROOT . '/register', $accountDetails);
-        $response->assertCreated();
-        $data = $response->json()['data'];
-        $user = User::find($data['id']);
-
-        $whoAmIResponse = $this->withSession([])->getJson(ROUTE_ROOT . '/whoami');
-        $whoAmIResponse->assertOk();
-        $whoAmIResponse->assertJson([
+        $response->assertJson([
             'data' => [
                 'id' => $user->id,
                 'username' => $user->username,

@@ -2,6 +2,10 @@
 
 pest()->group('api','cards');
 
+beforeEach(function(){
+    populateCardsFromJson();
+});
+
 describe('GET Card List', function(){
     it('gets a paginated list of cards', function(){
 

@@ -2,6 +2,7 @@
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\Card;
 
 const ROUTE_ROOT = 'api/v1';
 
@@ -34,6 +35,13 @@ function signIn($user = null)
     test()->actingAs($user);
 
     return $user;
+}
+
+function populateCardsFromJson(){
+    $cards = json_decode(file_get_contents(base_path('tests/Datasets/cards.json')), true);
+    foreach($cards as $card){
+        Card::create($card);
+    }
 }
 
 /*
