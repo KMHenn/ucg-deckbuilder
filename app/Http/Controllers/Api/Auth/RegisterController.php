@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\UserResource;
 use App\Support\Enums\UserRolesEnum;
 use Dedoc\Scramble\Attributes\Group;
+use Illuminate\Support\Facades\Log;
 
 #[Group('Auth', weight: 0)]
 class RegisterController extends Controller
@@ -20,6 +21,8 @@ class RegisterController extends Controller
      */
     public function __invoke(Request $request)
     {
+        Log::info('Register hit', $request->all());
+
         // @TODO optional email
         $validated = $request->validate([
             'username' => 'required|string|max:255|unique:users,username',
@@ -33,7 +36,6 @@ class RegisterController extends Controller
         ]);
 
         Auth::login($user);
-
         return (new UserResource($user))->response()->setStatusCode(201);
     }
 }

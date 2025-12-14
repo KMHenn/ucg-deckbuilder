@@ -5,7 +5,8 @@ use App\Http\Controllers\Api\Auth\LogoutController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\CardController;
 use App\Http\Controllers\Api\Auth\RegisterController;
-
+use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\UserResource;
 
 
 Route::name('api')->group(function(){
@@ -14,7 +15,7 @@ Route::name('api')->group(function(){
         Route::post('/login', LoginController::class)->name('.login');
         Route::post('/logout', LogoutController::class)->name('.logout');
         Route::middleware('auth:sanctum')->group(function(){
-            Route::get('/me', fn () => auth()->user());
+            Route::get('/whoami', fn () => new UserResource(Auth::user())->response()->setStatusCode(200))->name('.whoami');
         });
 
         Route::name('.cards')->prefix('cards')->group(function(){

@@ -1,14 +1,17 @@
 import BaseLayout from '../layouts/base-layout';
 import { useState, useEffect } from 'react';
-import { NumberInput, MultiSelect} from '@mantine/core';
+import { NumberInput, Alert} from '@mantine/core';
+import {IconInfoCircle} from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import '@mantine/core/styles/NumberInput.css';
 import '@mantine/core/styles/Pagination.css';
 import Tags from '@/components/tcg-card-views/tags';
 import CardTableMobileView from '@/components/tcg-card-views/card-table-mobile-view';
 import CardFilters from '@/components/tcg-card-views/card-filters';
+import { useAuth } from '../auth/auth-context';
 
 export default function CardTracker({totalCards = 1}) {
+    const { user } = useAuth();
     const [cardList, setCardList] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [recordsPerPage, setRecordsPerPage] = useState(10);
@@ -55,7 +58,13 @@ export default function CardTracker({totalCards = 1}) {
                 selectedFilters={selectedFilters}
                 onChange={setSelectedFilters}/>
             </div>
-            
+            {!user &&
+            <Alert 
+              variant='light' 
+              color='blue'
+              icon={<IconInfoCircle/>}> Log in or create an account to track your cards!</Alert>
+              
+            }
             <DataTable
               page={currentPage}
               height={'85vh'}
@@ -113,6 +122,7 @@ export default function CardTracker({totalCards = 1}) {
                     <NumberInput 
                       aria-label={number + ' quantity input'} 
                       min="0" 
+                      disabled={!user}
                       value={qty ? qty : 0} 
                       className="w-20 md:w-24 mx-auto"/>
                   )

@@ -28,6 +28,7 @@ describe('POST Register', function(){
 
         $user = User::find($data['id']);
         $this->assertAuthenticatedAs($user);
+        $this->assertDatabaseCount('users', 1);
 
         $response->assertJson([
             'data' => [
@@ -204,3 +205,60 @@ describe('POST Logout', function(){
         $response->assertUnauthorized();  
     });
 })->group('logout');
+
+describe('GET Whoami', function(){
+    it('gets details on the signed in user after login', function(){
+        // Log in
+        $password = 'myPassword';
+        $user = User::factory()->password($password)->create();
+
+        $credentials = [
+            'username' => $user->username,
+            'password' => $password,
+        ];
+
+        $response = $this->withSession([])->postJson(ROUTE_ROOT . '/login', $credentials);
+        $response->assertOk();
+
+        $whoAmIResponse = $this->withSession([])->getJson(ROUTE_ROOT . '/whoami');
+        $whoAmIResponse->assertOk();
+        $whoAmIResponse->assertJson([
+            'data' => [
+                'id' => $user->id,
+                'username' => $user->username,
+                'email' => $user->email,
+                'role' => $user->role->value,
+            ]
+        ]);
+    });
+
+    it('gets details on the signed in user after registration', function(){
+        // Register
+        $accountDetails = [
+            'username' => 'newUsername',
+            'password' => 'newPassword',
+            'password_confirmation' => 'newPassword',
+        ];
+
+        $response = $this->withSession([])->postJson(ROUTE_ROOT . '/register', $accountDetails);
+        $response->assertCreated();
+        $data = $response->json()['data'];
+        $user = User::find($data['id']);
+
+        $whoAmIResponse = $this->withSession([])->getJson(ROUTE_ROOT . '/whoami');
+        $whoAmIResponse->assertOk();
+        $whoAmIResponse->assertJson([
+            'data' => [
+                'id' => $user->id,
+                'username' => $user->username,
+                'email' => $user->email,
+                'role' => $user->role->value,
+            ]
+        ]);
+    });
+
+    it('can\'t get the signed in user if no one is signed in', function(){
+        $response = $this->withSession([])->getJson(ROUTE_ROOT . '/whoami');
+        $response->assertUnauthorized();
+    });
+})->group('whoami');

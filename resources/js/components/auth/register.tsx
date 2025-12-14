@@ -1,4 +1,6 @@
 import { useState } from "react";
+import {useAuth} from '../../auth/auth-context';
+import { useDisclosure } from '@mantine/hooks';
 import {
     Modal,
     TextInput,
@@ -8,115 +10,86 @@ import {
     Stack,
 } from "@mantine/core";
 
-export default function Register({ opened, onClose }) {
+export default function RegisterModal() {
+    const {register} = useAuth();
+    const [opened, {open, close}] = useDisclosure(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [passwordConfirmation, setPasswordConfirmation] = useState("");
-    const [error, setError] = useState("");
+    const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-
-    const getCookie = (name) => {
-        return document.cookie
-            .split("; ")
-            .find((row) => row.startsWith(name + "="))
-            ?.split("=")[1];
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError("");
         setLoading(true);
+        setError(null);
 
         try {
-            // Step 1 — Get CSRF cookie
-            await fetch("/sanctum/csrf-cookie", {
-                method: "GET",
-                credentials: "include",
-            });
-
-            const xsrf = getCookie("XSRF-TOKEN");
-
-            // Step 2 — Register request
-            const response = await fetch("/register", {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-XSRF-TOKEN": xsrf ?? "",
-                },
-                body: JSON.stringify({
-                    username,
-                    password,
-                    password_confirmation: passwordConfirmation,
-                }),
-            });
-
-            if (!response.ok) {
-                const txt = await response.text();
-                console.log(txt);
-                setError("Registration failed. Check your details.");
-                setLoading(false);
-                return;
-            }
-
-            // Auto-login + reload
-            onClose();
-            window.location.reload();
-        } catch (e) {
-            console.error(e);
-            setError("Something went wrong.");
+            await register(username, password, passwordConfirmation);
+            setUsername('');
+            setPassword('');
+            setPasswordConfirmation('');
+            close();
+        } catch (err: any) {
+            setError(err.response?.data?.message ?? 'Login failed');
+        } finally {
             setLoading(false);
         }
     };
 
     return (
-        <Modal
-            opened={opened}
-            onClose={onClose}
-            title="Register"
-            centered
-            radius="lg"
-        >
-            <form onSubmit={handleSubmit}>
-                <Stack gap="md">
-                    <TextInput
-                        label="Username"
-                        placeholder="Choose a username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                        radius="md"
-                    />
+        <>
+            <Button variant="subtle" onClick={open}>
+                Register
+            </Button>
+            <Modal
+                opened={opened}
+                onClose={close}
+                title="Register"
+                centered
+                radius="lg"
+            >
+                <form onSubmit={handleSubmit}>
+                    <Stack gap="md">
+                        <TextInput
+                            label="Username"
+                            placeholder="Choose a username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                            radius="md"
+                        />
 
-                    <PasswordInput
-                        label="Password"
-                        placeholder="Your password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        radius="md"
-                    />
+                        <PasswordInput
+                            label="Password"
+                            placeholder="Your password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            radius="md"
+                        />
 
-                    <PasswordInput
-                        label="Confirm Password"
-                        placeholder="Repeat password"
-                        value={passwordConfirmation}
-                        onChange={(e) => setPasswordConfirmation(e.target.value)}
-                        required
-                        radius="md"
-                    />
+                        <PasswordInput
+                            label="Confirm Password"
+                            placeholder="Repeat password"
+                            value={passwordConfirmation}
+                            onChange={(e) => setPasswordConfirmation(e.target.value)}
+                            required
+                            radius="md"
+                        />
 
-                    {error && (
-                        <Alert color="red" radius="md">
-                            {error}
-                        </Alert>
-                    )}
+                        {error && (
+                            <Alert color="red" radius="md">
+                                {error}
+                            </Alert>
+                        )}
 
-                    <Button type="submit" radius="md" loading={loading} fullWidth>
-                        Create account
-                    </Button>
-                </Stack>
-            </form>
-        </Modal>
+                        <Button type="submit" radius="md" loading={loading} fullWidth>
+                            Create account
+                        </Button>
+                    </Stack>
+                </form>
+            </Modal>
+        </>
     );
 }

@@ -11,6 +11,7 @@ type AuthContextType = {
   loading: boolean;
   login: (username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  register: (username: string, password: string, passwordConfirmation: string) => Promise<void>;
   refresh: () => Promise<void>;
 };
 
@@ -22,7 +23,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refresh = async () => {
     try {
-      const res = await api.get('/me');
+      await api.get('/sanctum/csrf-cookie');
+      const res = await api.get('/api/v1/whoami');
       setUser(res.data);
     } catch {
       setUser(null);
@@ -30,11 +32,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     }
   };
+  
+  /**
+   * Register request
+   * @param username 
+   * @param password 
+   * @param passwordConfirm 
+   */
+  const register = async(username: string, password: string, passwordConfirm: string) => {
+    await api.get('/sanctum/csrf-cookie');
+    
+    const res = await api.post('/api/v1/register', {
+      username,
+      password,
+      password_confirmation: passwordConfirm
+    });
 
+    setUser(res.data.user);
+  };
+
+  /**
+   * Login request
+   * 
+   * @param username 
+   * @param password 
+   */
   const login = async (username: string, password: string) => {
     await api.get('/sanctum/csrf-cookie');
 
-    const res = await api.post('/login', {
+    const res = await api.post('/api/v1/login', {
       username,
       password,
     });
@@ -42,8 +68,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(res.data.user);
   };
 
+  /**
+   * Logout request
+   */
   const logout = async () => {
-    await api.post('/logout');
+    await api.post('/api/v1/logout');
     setUser(null);
   };
 
@@ -58,6 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         loading,
         login,
         logout,
+        register,
         refresh,
       }}
     >

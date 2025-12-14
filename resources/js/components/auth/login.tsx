@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState} from "react";
+import { useDisclosure } from '@mantine/hooks';
+import {useAuth} from '../../auth/auth-context';
 import {
     Modal,
     TextInput,
@@ -7,35 +9,26 @@ import {
     Alert,
     Stack,
 } from "@mantine/core";
-import {api} from '../../lib/api';
 
-export default function LoginModal({ opened, onClose }) {
+export default function Login() {
+    const {login} = useAuth();
+    const [opened, {open, close}] = useDisclosure(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
-   const handleSubmit = async () => {
-    console.log('starting login attempt');
+   const handleSubmit = async (e) => {
+        e.preventDefault();
         setLoading(true);
         setError(null);
 
         try {
-            // Get CSRF cookie
-            await api.get('/sanctum/csrf-cookie');
-            console.log('CSRF got');
-
-            // Login
-            console.log('logging in');
-            const res = await api.post('/login', {
-                username,
-                password,
-            });
-
-            console.log('Logged in user:', res.data.user);
-            // update global auth state here
+            await login(username, password);
+            setUsername('');
+            setPassword('');
+            close();
         } catch (err: any) {
-            console.log(err.response?.data?.message ?? 'unknown error');
             setError(err.response?.data?.message ?? 'Login failed');
         } finally {
             setLoading(false);
@@ -43,44 +36,49 @@ export default function LoginModal({ opened, onClose }) {
     };
 
     return (
-        <Modal
-            opened={opened}
-            onClose={onClose}
-            title="Log in"
-            centered
-            radius="lg"
-        >
-            <form onSubmit={handleSubmit}>
-                <Stack gap="md">
-                    <TextInput
-                        label="Username"
-                        placeholder="Your username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                        radius="md"
-                    />
+        <>
+            <Button variant="filled" onClick={open}>
+                Login
+            </Button>
+            <Modal
+                opened={opened}
+                onClose={close}
+                title="Log in"
+                centered
+                radius="lg"
+            >
+                <form onSubmit={handleSubmit}>
+                    <Stack gap="md">
+                        <TextInput
+                            label="Username"
+                            placeholder="Your username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                            radius="md"
+                        />
 
-                    <PasswordInput
-                        label="Password"
-                        placeholder="Your password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        radius="md"
-                    />
+                        <PasswordInput
+                            label="Password"
+                            placeholder="Your password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            radius="md"
+                        />
 
-                    {error && (
-                        <Alert color="red" radius="md">
-                            {error}
-                        </Alert>
-                    )}
+                        {error && (
+                            <Alert color="red" radius="md">
+                                {error}
+                            </Alert>
+                        )}
 
-                    <Button type="submit" radius="md" loading={loading} fullWidth>
-                        Log in
-                    </Button>
-                </Stack>
-            </form>
-        </Modal>
+                        <Button type="submit" radius="md" loading={loading} fullWidth>
+                            Log in
+                        </Button>
+                    </Stack>
+                </form>
+            </Modal>
+        </>
     );
 }
