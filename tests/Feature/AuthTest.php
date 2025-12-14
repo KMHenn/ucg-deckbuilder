@@ -3,8 +3,6 @@
 use App\Support\Enums\UserRolesEnum;
 use App\Models\User;
 
-const ROUTE_ROOT = 'api/v1';
-
 pest()->group('api','auth');
 
 describe('POST Register', function(){

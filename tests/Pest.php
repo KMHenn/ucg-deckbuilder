@@ -3,6 +3,7 @@
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+const ROUTE_ROOT = 'api/v1';
 
 /*
 |--------------------------------------------------------------------------
