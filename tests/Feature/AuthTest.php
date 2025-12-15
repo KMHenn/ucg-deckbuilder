@@ -3,9 +3,11 @@
 use App\Support\Enums\UserRolesEnum;
 use App\Models\User;
 
-pest()->group('api','auth');
+pest()->group('auth');
 
-describe('POST Register', function(){
+// @TODO these broke after moving routes to web.php
+
+describe('POST /auth/register', function(){
     it('registers a new user', function () {
         $accountDetails = [
             'username' => 'newUsername',
@@ -13,7 +15,7 @@ describe('POST Register', function(){
             'password_confirmation' => 'newPassword',
         ];
 
-        $response = $this->withSession([])->postJson(ROUTE_ROOT . '/register', $accountDetails);
+        $response = $this->postJson('/auth/register', $accountDetails);
         $response->assertCreated();
 
         $data = $response->json()['data'];
@@ -49,7 +51,7 @@ describe('POST Register', function(){
             'password_confirmation' => 'newPassword',
         ];
 
-        $response = $this->postJson(ROUTE_ROOT . '/register', $accountDetails);
+        $response = $this->postJson('/auth/register', $accountDetails);
         $response->assertInvalid('username');
         $this->assertDatabaseCount('users', 1);
     });
@@ -61,7 +63,7 @@ describe('POST Register', function(){
             'password_confirmation' => 'newPW',
         ];
 
-        $response = $this->postJson(ROUTE_ROOT . '/register', $accountDetails);
+        $response = $this->postJson('/auth/register', $accountDetails);
         $response->assertInvalid('password');
         $this->assertDatabaseCount('users', 0);
     });
@@ -73,7 +75,7 @@ describe('POST Register', function(){
             'password_confirmation' => 'anotherPassword',
         ];
 
-        $response = $this->postJson(ROUTE_ROOT . '/register', $accountDetails);
+        $response = $this->postJson('/auth/register', $accountDetails);
         $response->assertInvalid('password');
         $this->assertDatabaseCount('users', 0);
     });
@@ -85,7 +87,7 @@ describe('POST Register', function(){
             'password_confirmation' => 'newPassword',
         ];
 
-        $response = $this->postJson(ROUTE_ROOT . '/register', $accountDetails);
+        $response = $this->postJson('/auth/register', $accountDetails);
         $response->assertInvalid('username');
         $this->assertDatabaseCount('users', 0);
     });
@@ -97,7 +99,7 @@ describe('POST Register', function(){
             'password_confirmation' => 'newPassword',
         ];
 
-        $response = $this->postJson(ROUTE_ROOT . '/register', $accountDetails);
+        $response = $this->postJson('/auth/register', $accountDetails);
         $response->assertInvalid('password');
         $this->assertDatabaseCount('users', 0);
     });
@@ -109,13 +111,13 @@ describe('POST Register', function(){
             'password_confirmation' => null,
         ];
 
-        $response = $this->postJson(ROUTE_ROOT . '/register', $accountDetails);
+        $response = $this->postJson('/auth/register', $accountDetails);
         $response->assertInvalid('password');
         $this->assertDatabaseCount('users', 0);
     });
 })->group('register');
 
-describe('POST Login', function(){
+describe('POST /auth/login', function(){
     it('logs in an existing user', function(){
         $password = 'myPassword';
         $user = User::factory()->password($password)->create();
@@ -125,7 +127,7 @@ describe('POST Login', function(){
             'password' => $password,
         ];
 
-        $response = $this->withSession([])->postJson(ROUTE_ROOT . '/login', $credentials);
+        $response = $this->withSession([])->postJson('/auth/login', $credentials);
         $response->assertOk();
         $this->assertAuthenticatedAs($user);
         $response->assertJson([
@@ -147,7 +149,7 @@ describe('POST Login', function(){
             'password' => $password,
         ];
 
-        $response = $this->withSession([])->postJson(ROUTE_ROOT . '/login', $credentials);
+        $response = $this->withSession([])->postJson('/auth/login', $credentials);
         $response->assertInvalid('username');
     });
 
@@ -160,7 +162,7 @@ describe('POST Login', function(){
             'password' => null,
         ];
 
-        $response = $this->withSession([])->postJson(ROUTE_ROOT . '/login', $credentials);
+        $response = $this->withSession([])->postJson('/auth/login', $credentials);
         $response->assertInvalid('password');
     });
 
@@ -173,35 +175,35 @@ describe('POST Login', function(){
             'password' => 'otherPassword',
         ];
 
-        $response = $this->withSession([])->postJson(ROUTE_ROOT . '/login', $credentials);
+        $response = $this->withSession([])->postJson('/auth/login', $credentials);
         $response->assertUnprocessable();
     });
 })->group('login');
 
-describe('POST Logout', function(){
+describe('POST /auth/logout', function(){
     it('logs out the current user', function(){
         // Log in
         $user = User::factory()->create();
         signIn($user);
 
         // Log out
-        $response = $this->withSession([])->postJson(ROUTE_ROOT . '/logout');
+        $response = $this->withSession([])->postJson('/auth/logout');
         $response->assertOk();
     });
 
     it('can\'t log someone out if no one is logged in', function(){
-        $response = $this->withSession([])->postJson(ROUTE_ROOT . '/logout');
+        $response = $this->withSession([])->postJson('/auth/logout');
         $response->assertUnauthorized();  
     });
 })->group('logout');
 
-describe('GET Whoami', function(){
+describe('GET /auth/user', function(){
     it('gets details on the signed in user after login', function(){
         // Log in
         $user = User::factory()->create();
         signIn($user);
 
-        $response = $this->withSession([])->getJson(ROUTE_ROOT . '/whoami');
+        $response = $this->withSession([])->getJson('/auth/user');
         $response->assertOk();
         $response->assertJson([
             'data' => [
@@ -214,7 +216,7 @@ describe('GET Whoami', function(){
     });
 
     it('can\'t get the signed in user if no one is signed in', function(){
-        $response = $this->withSession([])->getJson(ROUTE_ROOT . '/whoami');
+        $response = $this->withSession([])->getJson('/auth/user');
         $response->assertUnauthorized();
     });
-})->group('whoami');
+})->group('user');

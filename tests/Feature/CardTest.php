@@ -6,19 +6,19 @@ beforeEach(function(){
     populateCardsFromJson();
 });
 
-describe('GET Card List', function(){
+describe('GET /cards', function(){
     it('gets a paginated list of cards', function(){
 
     });
 });
 
-describe('GET Card Filters', function(){
+describe('GET /cards/filters', function(){
     it('gets available card filters and their options', function(){
 
     });
 });
 
-describe('GET Card', function(){
+describe('GET /cards/{card}', function(){
     it('gets all details for a specific card', function(){
 
     });
@@ -32,7 +32,7 @@ describe('GET Card', function(){
     });
 });
 
-describe('POST Update Card Quantity', function(){
+describe('POST /cards/{card}/quantity', function(){
     it('updates the user\'s quantity of the specified card', function(){
 
     });

@@ -19,14 +19,14 @@ export default function CardTracker({totalCards = 1}) {
     const [selectedFilters, setSelectedFilters] = useState({});
 
     useEffect(() => {
-        fetch(`/api/v1/cards/filters`)
+        fetch(`/cards/filters`)
             .then(response => response.json())
             .then(json => setFilters(json.data))
             .catch(error => console.error(error));
     }, []);
         
     useEffect(() => {
-        let cardListRequest = `/api/v1/cards?page=${currentPage}&per_page=${recordsPerPage}`;
+        let cardListRequest = `/cards?page=${currentPage}&per_page=${recordsPerPage}`;
         if(Object.keys(selectedFilters).length > 0){
           const filterQuery = Object.entries(selectedFilters)
             .map(([key, vals]) =>

@@ -4,6 +4,8 @@ import { api } from '../lib/api';
 type User = {
   id: number;
   username: string;
+  email: null | string;
+  role: string;
 };
 
 type AuthContextType = {
@@ -22,10 +24,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const refresh = async () => {
+    // @TODO not working - signing out on page reload, issue with session
+    console.log('--Refresh called--');
+    console.log('current user: ' + user);
     try {
-      await api.get('/sanctum/csrf-cookie');
-      const res = await api.get('/api/v1/whoami');
-      setUser(res.data);
+      const res = await api.get('/auth/user');
+      console.log('User response: ',res.data.data)
+      setUser(res.data.data);
     } catch {
       setUser(null);
     } finally {
@@ -42,13 +47,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = async(username: string, password: string, passwordConfirm: string) => {
     await api.get('/sanctum/csrf-cookie');
     
-    const res = await api.post('/api/v1/register', {
+    const res = await api.post('/auth/register', {
       username,
       password,
       password_confirmation: passwordConfirm
     });
 
-    setUser(res.data.user);
+    setUser(res.data.data);
+    // await refresh();
   };
 
   /**
@@ -60,20 +66,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (username: string, password: string) => {
     await api.get('/sanctum/csrf-cookie');
 
-    const res = await api.post('/api/v1/login', {
+    const res = await api.post('/auth/login', {
       username,
       password,
     });
 
-    setUser(res.data.user);
+    setUser(res.data.data);
+    // await refresh();
   };
 
   /**
    * Logout request
    */
   const logout = async () => {
-    await api.post('/api/v1/logout');
+    await api.get('/sanctum/csrf-cookie');
+    await api.post('/auth/logout');
     setUser(null);
+    await refresh();
   };
 
   useEffect(() => {

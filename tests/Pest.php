@@ -4,7 +4,6 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Card;
 
-const ROUTE_ROOT = 'api/v1';
 
 /*
 |--------------------------------------------------------------------------
