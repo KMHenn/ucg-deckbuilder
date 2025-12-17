@@ -17,28 +17,28 @@ class CardResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $user = auth()->user();
         return [
             'id' => $this->id,
             'formatted_name' => $this->formattedName(),
             'number' => $this->number,
             'thumbnail_url' => $this->thumbnail_url,
-            'tags' => $this->getDetailsForCard(),
+            'tags' => $this->getDetailsArray(),
             'override_card_limit' => $this->override_card_limit,
-            
+            'quantity' => !is_null($user) ? $user?->cardQuantity($this->id) : null,
             $this->mergeWhen(
-                $request->routeIs('api.v1.cards.show'),
+                $request->routeIs('cards.show'),
                 [
                     'name' => $this->name,
                     'subtitle' => $this->subtitle,
-                    'round' => $this->whenNotNull($this->round),
-                    'level' => $this->whenNotNull($this->level),
+                    'round' => $this->round,
+                    'level' => $this->level,
                     'effect' => $this->effect,
                     'feature' => $this->feature,
                     'rarity' => $this->rarity,
                     'participating_works' => $this->participating_works,
                     'section' => $this->section,
                     'bundle' => $this->bundle,
-                    'rarity' => $this->rarity,
                     'character_name' => $this->character_name,
                     'errata' => $this->errata_url,
                     'ascended' => !is_null($this->ascended_date),
@@ -46,32 +46,5 @@ class CardResource extends JsonResource
                 ]
             )
         ];
-    }
-
-    /**
-     * Gather array formatted columns based on card type
-     */
-    private function getDetailsForCard(): array{
-        $details = [
-            'Feature' => $this->formattedFeature(),
-            'Rarity' => $this->rarity,
-            'Participating Works' => $this->participating_works,
-            'Release' => $this->section === 'PR' ? $this->section : sprintf('%s-%s', $this->section, $this->bundle),
-        ];
-        if($this->feature === 'scene'){
-            return array_merge(
-                $details, 
-                ['Round' => 'Round ' . $this->round],
-            );
-        }
-
-        return array_merge(
-            $details, 
-            [
-                'Type' => ucfirst($this->type),
-                'Level' => 'Level ' . $this->level,
-                'Character' => $this->character_name,
-            ]
-        );
     }
 }

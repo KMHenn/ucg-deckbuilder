@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Web\Auth;
+namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -18,6 +18,7 @@ class LogoutController extends Controller
         if (!Auth::check()) {
             return response()->json(['message' => 'You are not logged in.'], 401);
         }
+        
         Auth::logout();
 
         $request->session()->invalidate();

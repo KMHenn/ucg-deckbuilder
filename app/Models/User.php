@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -53,5 +54,18 @@ class User extends Authenticatable
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
         ];
+    }
+
+    public function cards(): BelongsToMany{
+        return $this->belongsToMany(Card::class, 'user_cards')
+            ->withPivot('quantity');
+    }
+
+    public function cardQuantity(int $cardId): int{
+        return (int)$this->cards()
+            ->where('card_id', $cardId)
+            ->first()
+            ?->pivot
+            ?->quantity ?? 0;
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Card extends Model
 {
@@ -102,11 +103,35 @@ class Card extends Model
         return sprintf('%s-%s', $this->section, $this->bundle);
     }
 
-    private function getBaseIdentifier(): string{
-        if(!is_null($this->bundle)){
-            return sprintf('%s%s-%s', $this->section, $this->bundle,$this->serial);
+    /**
+     * Gather array formatted columns based on card type
+     */
+    public function getDetailsArray(): array{
+        $details = [
+            'Feature' => $this->formattedFeature(),
+            'Rarity' => $this->rarity,
+            'Participating Works' => $this->participating_works,
+            'Release' => $this->section === 'PR' ? $this->section : sprintf('%s-%s', $this->section, $this->bundle),
+        ];
+        if($this->feature === 'scene'){
+            return array_merge(
+                $details, 
+                ['Round' => 'Round ' . $this->round],
+            );
         }
 
-        return sprintf('%s-%s', $this->section, $this->serial);
+        return array_merge(
+            $details, 
+            [
+                'Type' => ucfirst($this->type),
+                'Level' => 'Level ' . $this->level,
+                'Character' => $this->character_name,
+            ]
+        );
+    }
+
+    public function users(): BelongsToMany{
+        return $this->belongsToMany(User::class, 'user_cards')
+            ->withPivot('quantity');
     }
 }

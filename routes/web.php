@@ -2,12 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\Web\DeckbuilderController;
-use App\Http\Controllers\Web\CardTrackerController;
-use App\Http\Controllers\Web\Auth\LoginController;
-use App\Http\Controllers\Web\Auth\LogoutController;
-use App\Http\Controllers\Web\CardController;
-use App\Http\Controllers\Web\Auth\RegisterController;
+use App\Http\Controllers\DeckbuilderController;
+use App\Http\Controllers\CardTrackerController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\CardController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Resources\UserResource;
 
 Route::get('/', function () {
@@ -23,7 +23,7 @@ Route::name('auth')->prefix('auth')->group(function(){
     Route::post('/register', RegisterController::class)->name('.register');
     Route::post('/login', LoginController::class)->name('.login');
 
-    Route::middleware('auth:sanctum')->group(function(){
+    Route::middleware('auth:web')->group(function(){
         Route::post('/logout', LogoutController::class)->name('.logout');
         Route::get('/user', fn (Illuminate\Http\Request $request) => new UserResource($request->user()))->name('.user');
     });

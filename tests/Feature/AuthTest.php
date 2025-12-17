@@ -38,7 +38,7 @@ describe('POST /auth/register', function(){
                 'role' => $user->role->value,
             ]
         ]);
-    })->group('debug');
+    });
 
     it('can\'t register a user when the username is taken', function(){
         User::factory()->username('newUsername')->create();

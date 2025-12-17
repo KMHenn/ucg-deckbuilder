@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Rules\ValidSectionAndBundle;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CardRequest extends FormRequest
+class ShowCardsRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.

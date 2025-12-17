@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Web;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\CardRequest;
+use App\Http\Requests\ShowCardsRequest;
 use App\Models\Card;
 use App\Http\Resources\CardResource;
 use App\Http\Controllers\Controller;
@@ -17,7 +17,7 @@ class CardController extends Controller
      * 
      * @response array{data: CardResource[]}
      */
-    public function index(CardRequest $request){
+    public function index(ShowCardsRequest $request){
         $perPage = $request->validated('per_page', 12);
         $pageNumber = $request->validated('page', 1);
         $query = Card::query();
@@ -107,7 +107,7 @@ class CardController extends Controller
                 ]);
             }
             elseif($filter === 'rarity'){
-                                $values = $values->map(fn ($value) => [
+                $values = $values->map(fn ($value) => [
                     'value' => (string)$value ?? '',
                     'label' => str_replace('_', ' ', (string)$value)
                 ]);
@@ -159,5 +159,22 @@ class CardController extends Controller
                 'filter_count' => count($filters)
             ]
         ]);
+    }
+
+    public function updateQuantity(Card $card, Request $request){
+        $data = $request->validate([
+            'quantity' => ['required', 'integer', 'min:0']
+        ]);
+
+        $user = auth()->user();
+        if (is_null($user)) {
+            return response()->json(['message' => 'You must be logged in to track cards.'], 401);
+        }
+
+        $user->cards()->syncWithoutDetaching([
+            $card->id => ['quantity' => $data['quantity']]
+        ]);
+
+        return response()->json(['message' => 'Quantity updated successfully'], 200);
     }
 }
