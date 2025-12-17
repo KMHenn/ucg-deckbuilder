@@ -13,7 +13,10 @@ class CardTrackerController extends Controller
         return Inertia::render('card-tracker', ['totalCards' => Card::count()]);
     }
     
-    public function store(){
-        // @TODO
+    public function store(Card $card, Request $request){
+        $user = auth()->user();
+        if(is_null($user)){
+            // Fail, need user to track quantity
+        }
     }
 }

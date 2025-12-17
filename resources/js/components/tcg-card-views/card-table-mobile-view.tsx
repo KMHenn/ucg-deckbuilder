@@ -1,7 +1,10 @@
 import Tags from '@/components/tcg-card-views/tags';
 import { NumberInput, MultiSelect} from '@mantine/core';
+import { useAuth } from '../../auth/auth-context';
 
 export default function CardTableMobileView({card, quantity}){
+    const { user } = useAuth();
+
     return (
         <div className="flex flex-col w-full bg-[#ffffffeb] shadow-md rounded-md p-2 text-black" key={'mobile-' + card.id} data-id={card.id}>
             <div className="items-center pb-2 my-auto mx-auto">
@@ -26,6 +29,7 @@ export default function CardTableMobileView({card, quantity}){
                 aria-label={card.number + ' quantity input'} 
                 min="0" 
                 label="Quantity"
+                disabled={!user}
                 value={quantity ? quantity : 0} 
                 className="w-20 md:w-24 mx-auto"/>
           </div>

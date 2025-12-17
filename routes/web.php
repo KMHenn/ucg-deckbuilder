@@ -4,11 +4,10 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Web\DeckbuilderController;
 use App\Http\Controllers\Web\CardTrackerController;
-use App\Http\Controllers\Api\Auth\LoginController;
-use App\Http\Controllers\Api\Auth\LogoutController;
-use App\Http\Controllers\Api\CardController;
-use App\Http\Controllers\Api\Auth\RegisterController;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Web\Auth\LoginController;
+use App\Http\Controllers\Web\Auth\LogoutController;
+use App\Http\Controllers\Web\CardController;
+use App\Http\Controllers\Web\Auth\RegisterController;
 use App\Http\Resources\UserResource;
 
 Route::get('/', function () {

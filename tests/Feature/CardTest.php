@@ -8,6 +8,11 @@ beforeEach(function(){
 
 describe('GET /cards', function(){
     it('gets a paginated list of cards', function(){
+        $response = $this->getJson('/cards');
+        $response->assertOk();
+    });
+
+    it('gets a card list and the signed in user\'s quantity', function(){
 
     });
 });

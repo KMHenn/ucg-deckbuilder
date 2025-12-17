@@ -9,6 +9,7 @@ import Tags from '@/components/tcg-card-views/tags';
 import CardTableMobileView from '@/components/tcg-card-views/card-table-mobile-view';
 import CardFilters from '@/components/tcg-card-views/card-filters';
 import { useAuth } from '../auth/auth-context';
+import { api } from '@/lib/api';
 
 export default function CardTracker({totalCards = 1}) {
     const { user } = useAuth();
@@ -47,7 +48,6 @@ export default function CardTracker({totalCards = 1}) {
             .then()
             .catch(error => console.error(error));
     }, [currentPage, recordsPerPage, selectedFilters]);
-  
     
     return (
         <BaseLayout>
@@ -118,14 +118,32 @@ export default function CardTracker({totalCards = 1}) {
                   title: 'Quantity',
                   width: '10vw',
                   visibleMediaQuery: (theme) => `(min-width: ${theme.breakpoints.md})`,
-                  render: ({qty, number}) => (
-                    <NumberInput 
-                      aria-label={number + ' quantity input'} 
-                      min="0" 
-                      disabled={!user}
-                      value={qty ? qty : 0} 
-                      className="w-20 md:w-24 mx-auto"/>
-                  )
+                  render: ({ qty, id, number }) => {
+                      const [localQty, setLocalQty] = useState(qty ?? 0);
+
+                      const handleBlur = () => {
+                        if (!user){
+                          // Can't store quantity without associated user
+                          return;
+                        }
+
+                        api.post(`/cards/${id}/quantity`, { qty: localQty })
+                          .then(() => console.log(`Card ${id} quantity updated to ${localQty}`))
+                          .catch((err) => console.error(`Failed to update card ${id}`, err));
+                      };
+
+                      return (
+                        <NumberInput
+                          aria-label={number + ' quantity input'}
+                          min={0}
+                          disabled={!user}
+                          value={localQty}
+                          onChange={(val) => setLocalQty(val ?? 0)}
+                          onBlur={handleBlur}
+                          className="w-20 md:w-24 mx-auto"
+                        />
+                      );
+                    },
                 }
               ]}
             />

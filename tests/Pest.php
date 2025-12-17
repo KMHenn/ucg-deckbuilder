@@ -30,7 +30,6 @@ uses(TestCase::class, RefreshDatabase::class)->in('Feature', 'Unit');
 function signIn($user = null)
 {
     $user = $user ?? \App\Models\User::factory()->create();
-
     test()->actingAs($user);
 
     return $user;
@@ -42,17 +41,3 @@ function populateCardsFromJson(){
         Card::create($card);
     }
 }
-
-/*
-|--------------------------------------------------------------------------
-| Custom Expectations
-|--------------------------------------------------------------------------
-|
-| Example:
-| expect($value)->toBeOne();
-|
-*/
-
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
-});

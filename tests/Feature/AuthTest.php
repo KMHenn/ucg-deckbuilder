@@ -5,7 +5,7 @@ use App\Models\User;
 
 pest()->group('auth');
 
-// @TODO these broke after moving routes to web.php
+// @TODO these broke
 
 describe('POST /auth/register', function(){
     it('registers a new user', function () {
@@ -15,7 +15,7 @@ describe('POST /auth/register', function(){
             'password_confirmation' => 'newPassword',
         ];
 
-        $response = $this->postJson('/auth/register', $accountDetails);
+        $response = $this->withHeader('Accept', 'application/json')->post('/auth/register', $accountDetails);
         $response->assertCreated();
 
         $data = $response->json()['data'];
@@ -38,7 +38,7 @@ describe('POST /auth/register', function(){
                 'role' => $user->role->value,
             ]
         ]);
-    });
+    })->group('debug');
 
     it('can\'t register a user when the username is taken', function(){
         User::factory()->username('newUsername')->create();
