@@ -16,7 +16,7 @@ class ShowCardsRequest extends FormRequest
     {
         return [
             'per_page' => ['numeric', 'integer', 'min:1'],
-            'page_number' => ['numeric', 'integer', 'min:1'],
+            'page' => ['numeric', 'integer', 'min:1'],
             'include_ascended' => ['nullable','boolean'],
 
             'participating_works' => ['nullable', 'array'],

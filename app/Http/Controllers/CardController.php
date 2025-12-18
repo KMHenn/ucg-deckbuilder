@@ -15,9 +15,9 @@ class CardController extends Controller
     /**
      * GET Card Listing
      * 
-     * @response array{data: CardResource[]}
+     * @response array{data: CardResource[], meta: array{total_cards: int, page: int, per_page: int}}
      */
-    public function index(ShowCardsRequest $request){
+    public function list(ShowCardsRequest $request){
         $perPage = $request->validated('per_page', 12);
         $pageNumber = $request->validated('page', 1);
         $query = Card::query();
@@ -59,10 +59,17 @@ class CardController extends Controller
             $query = $query->whereIn($key, $filter);
         }
 
+        $totalCards = (clone $query)->count();
         $query = $query->offset($perPage * ($pageNumber - 1))
             ->limit($perPage)
             ->get();
-        return CardResource::collection($query);
+
+        return response()->json([
+            'data' => CardResource::collection($query),
+            'meta' => [
+                'total_cards' => $totalCards,
+            ]
+        ]);
     }
 
     /**

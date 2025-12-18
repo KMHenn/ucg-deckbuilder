@@ -4,9 +4,6 @@ import { useState, useEffect } from 'react';
 import CardModal from '@/components/tcg-card-views/card-modal';
 import { useDisclosure } from '@mantine/hooks';
 import '@mantine/core/styles/Modal.css';
-// import Button from '@mui/material/Button';
-// import TextField from '@mui/material/TextField';
-// import Pagination from '@mui/material/Pagination';
 
 
 const style = {
@@ -22,7 +19,7 @@ const style = {
   p: 4,
 };
 
-export default function Deckbuilder({ totalPages = 1 }) {
+export default function Deckbuilder() {
     const [cardList, setCardList] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedCard, setSelectedCard] = useState(null);

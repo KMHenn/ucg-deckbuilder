@@ -11,21 +11,24 @@ import CardFilters from '@/components/tcg-card-views/card-filters';
 import { useAuth } from '../auth/auth-context';
 import { api } from '@/lib/api';
 
-export default function CardTracker({totalCards = 1}) {
+export default function CardTracker() {
     const { user } = useAuth();
     const [cardList, setCardList] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [recordsPerPage, setRecordsPerPage] = useState(10);
     const [filters, setFilters] = useState({});
     const [selectedFilters, setSelectedFilters] = useState({});
+    const [totalCards, setTotalCards] = useState(0);
 
+    // Load filters
     useEffect(() => {
-        fetch(`/cards/filters`)
-            .then(response => response.json())
-            .then(json => setFilters(json.data))
+        api.get(`/cards/filters`)
+            .then(response => {
+              setFilters(response.data.data)})
             .catch(error => console.error(error));
     }, []);
         
+    // Get card listing
     useEffect(() => {
         let cardListRequest = `/cards?page=${currentPage}&per_page=${recordsPerPage}`;
         if(Object.keys(selectedFilters).length > 0){
@@ -41,13 +44,19 @@ export default function CardTracker({totalCards = 1}) {
           cardListRequest = cardListRequest + '&' + filterQuery;
         }
 
-        // @TODO totalCards broken after filtering- not updating
-        fetch(`${cardListRequest}`)
-            .then(response => response.json())
-            .then(dataCollection => setCardList(dataCollection.data))
-            .then()
+        api.get(`${cardListRequest}`)
+            .then(response => {
+              console.log('updating rendered cards')
+              setCardList(response.data.data);
+              setTotalCards(response.data.meta.total_cards);
+            })
             .catch(error => console.error(error));
     }, [currentPage, recordsPerPage, selectedFilters]);
+
+    // Reset current page after making changes to query that impact total pages
+    useEffect(() => {
+      setCurrentPage(1);
+    }, [selectedFilters, recordsPerPage]);
     
     return (
         <BaseLayout>
@@ -62,12 +71,11 @@ export default function CardTracker({totalCards = 1}) {
             <Alert 
               variant='light' 
               color='blue'
-              icon={<IconInfoCircle/>}> Log in or create an account to track your cards!</Alert>
-              
+              icon={<IconInfoCircle/>}> Log in or create an account to track your cards!</Alert> 
             }
             <DataTable
               page={currentPage}
-              height={'85vh'}
+              height={'75vh'}
               onPageChange={setCurrentPage}
               totalRecords={totalCards}
               recordsPerPage={recordsPerPage}
@@ -79,22 +87,22 @@ export default function CardTracker({totalCards = 1}) {
               striped
               records={cardList}
               columns={[
-                {
-                  accessor: 'mobile',
-                  title:'',
-                  visibleMediaQuery: (theme) => `(max-width: ${theme.breakpoints.sm})`,
-                  render: (record) => <CardTableMobileView card={record} quantity="0"/>
-                },
+                // {
+                //   accessor: 'mobile',
+                //   title:'',
+                //   //visibleMediaQuery: (theme) => `(max-width: ${theme.breakpoints.sm})`,
+                //   render: (record) => <CardTableMobileView card={record} quantity="0"/>
+                // },
                 {
                   accessor: 'number',
-                  visibleMediaQuery: (theme) => `(min-width: ${theme.breakpoints.md})`,
+                  //visibleMediaQuery: (theme) => `(min-width: ${theme.breakpoints.md})`,
                   width: '15vw',
                 },
                 {
                   accessor: 'thumbnail_url',
                   width: '6vw',
                   title: 'Preview',
-                  visibleMediaQuery: (theme) => `(min-width: ${theme.breakpoints.md})`,
+                  //visibleMediaQuery: (theme) => `(min-width: ${theme.breakpoints.md})`,
                   render: ({thumbnail_url, number}) => (
                     <img className="mx-auto w-auto h-auto max-w-[4vw] max-h-[4vw]" src={thumbnail_url} alt={number + ' thumbnail'}/>
                   )
@@ -103,23 +111,23 @@ export default function CardTracker({totalCards = 1}) {
                   accessor: 'formatted_name',
                   title: 'Name',
                   width: '20vw',
-                  visibleMediaQuery: (theme) => `(min-width: ${theme.breakpoints.md})`,
+                  //visibleMediaQuery: (theme) => `(min-width: ${theme.breakpoints.md})`,
                 },
                 {
                   accessor: 'tags',
                   title: 'Tags',
-                  visibleMediaQuery: (theme) => `(min-width: ${theme.breakpoints.md})`,
+                  //visibleMediaQuery: (theme) => `(min-width: ${theme.breakpoints.md})`,
                   render: ({tags}) => (
                     <Tags tags={tags}/>        
                   )
                 },
                 {
-                  accessor: 'qty',
+                  accessor: 'quantity',
                   title: 'Quantity',
                   width: '10vw',
-                  visibleMediaQuery: (theme) => `(min-width: ${theme.breakpoints.md})`,
-                  render: ({ qty, id, number }) => {
-                      const [localQty, setLocalQty] = useState(qty ?? 0);
+                  //visibleMediaQuery: (theme) => `(min-width: ${theme.breakpoints.md})`,
+                  render: ({ quantity, id, number }) => {
+                      const [localQty, setLocalQty] = useState(quantity ?? 0);
 
                       const handleBlur = () => {
                         if (!user){
@@ -127,7 +135,7 @@ export default function CardTracker({totalCards = 1}) {
                           return;
                         }
 
-                        api.post(`/cards/${id}/quantity`, { qty: localQty })
+                        api.post(`/cards/${id}/quantity`, { quantity: localQty })
                           .then(() => console.log(`Card ${id} quantity updated to ${localQty}`))
                           .catch((err) => console.error(`Failed to update card ${id}`, err));
                       };

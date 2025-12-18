@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('decks', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->foreignUuid('user_id');
             $table->string('name')->default('My Deck');
             $table->timestamps();
         });
@@ -20,6 +21,7 @@ return new class extends Migration
         Schema::create('deck_cards', function(Blueprint $table){
             $table->foreignUuid('deck_id');
             $table->foreignId('card_id');
+            $table->integer('order')->nullable();
             $table->integer('quantity');
         });
     }

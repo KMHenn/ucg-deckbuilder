@@ -11,6 +11,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -67,5 +68,9 @@ class User extends Authenticatable
             ->first()
             ?->pivot
             ?->quantity ?? 0;
+    }
+
+    public function decks(): HasMany{
+        return $this->hasMany(Deck::class, 'user_id', 'id');
     }
 }
