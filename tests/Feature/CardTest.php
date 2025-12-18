@@ -19,6 +19,8 @@ describe('GET /cards', function(){
                 '*' => [
                     'id',
                     'formatted_name',
+                    'name',
+                    'subtitle',
                     'number',
                     'thumbnail_url',
                     'tags',
@@ -40,6 +42,8 @@ describe('GET /cards', function(){
                 '*' => [
                     'id',
                     'formatted_name',
+                    'name',
+                    'subtitle',
                     'number',
                     'thumbnail_url',
                     'tags',

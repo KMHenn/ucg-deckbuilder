@@ -6,8 +6,7 @@ import { DataTable } from 'mantine-datatable';
 import '@mantine/core/styles/NumberInput.css';
 import '@mantine/core/styles/Pagination.css';
 import Tags from '@/components/tcg-card-views/tags';
-import CardTableMobileView from '@/components/tcg-card-views/card-table-mobile-view';
-import CardFilters from '@/components/tcg-card-views/card-filters';
+import Filters from '@/components/tcg-card-views/filters';
 import { useAuth } from '../auth/auth-context';
 import { api } from '@/lib/api';
 
@@ -62,7 +61,7 @@ export default function CardTracker() {
         <BaseLayout>
           <div className="h-full w-full grow flex flex-col gap-2">
             <div className="flex w-full">
-              <CardFilters
+              <Filters
                 filters={filters}
                 selectedFilters={selectedFilters}
                 onChange={setSelectedFilters}/>
@@ -87,7 +86,7 @@ export default function CardTracker() {
               striped
               records={cardList}
               columns={[
-                // {
+                // { @TODO mobile view
                 //   accessor: 'mobile',
                 //   title:'',
                 //   //visibleMediaQuery: (theme) => `(max-width: ${theme.breakpoints.sm})`,
@@ -140,6 +139,7 @@ export default function CardTracker() {
                           .catch((err) => console.error(`Failed to update card ${id}`, err));
                       };
 
+                      // @TODO values don't clear on refresh when logging out
                       return (
                         <NumberInput
                           aria-label={number + ' quantity input'}

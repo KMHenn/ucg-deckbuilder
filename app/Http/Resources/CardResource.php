@@ -21,6 +21,8 @@ class CardResource extends JsonResource
         return [
             'id' => $this->id,
             'formatted_name' => $this->formattedName(),
+            'name' => $this->name,
+            'subtitle' => $this->subtitle,
             'number' => $this->number,
             'thumbnail_url' => $this->thumbnail_url,
             'tags' => $this->getDetailsArray(),
@@ -29,8 +31,6 @@ class CardResource extends JsonResource
             $this->mergeWhen(
                 $request->routeIs('cards.show'),
                 [
-                    'name' => $this->name,
-                    'subtitle' => $this->subtitle,
                     'round' => $this->round,
                     'level' => $this->level,
                     'effect' => $this->effect,

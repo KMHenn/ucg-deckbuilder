@@ -19,6 +19,8 @@ class ShowCardsRequest extends FormRequest
             'page' => ['numeric', 'integer', 'min:1'],
             'include_ascended' => ['nullable','boolean'],
 
+            'search' => ['nullable', 'string', 'max:255'],
+
             'participating_works' => ['nullable', 'array'],
             'participating_works.*' => ['string', 'exists:cards,participating_works'],
 

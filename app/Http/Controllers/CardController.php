@@ -8,7 +8,6 @@ use App\Models\Card;
 use App\Http\Resources\CardResource;
 use App\Http\Controllers\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Models\User;
 
 
 class CardController extends Controller

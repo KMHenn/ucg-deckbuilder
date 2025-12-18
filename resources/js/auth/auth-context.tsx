@@ -24,12 +24,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const refresh = async () => {
-    // @TODO not working - signing out on page reload, issue with session
-    console.log('--Refresh called--');
-    console.log('current user: ' + user);
     try {
       const res = await api.get('/auth/user');
-      console.log('User response: ',res.data.data)
       setUser(res.data.data);
     } catch {
       setUser(null);
@@ -54,7 +50,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     setUser(res.data.data);
-    // await refresh();
   };
 
   /**
@@ -72,7 +67,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     setUser(res.data.data);
-    // await refresh();
   };
 
   /**

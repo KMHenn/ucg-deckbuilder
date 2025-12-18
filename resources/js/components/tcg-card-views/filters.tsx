@@ -1,19 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { MultiSelect, TextInput, ActionIcon, Button} from '@mantine/core';
 import {IconAdjustmentsAlt, IconX } from '@tabler/icons-react';
 
 const PILL_COLORS = {
-  rarity:   "bg-purple-200 text-purple-800",
-  feature:  "bg-green-200 text-green-800",
-  level:    "bg-blue-200 text-blue-800",
-  round:    "bg-yellow-200 text-yellow-900",
-  type:     "bg-red-200 text-red-800",
-  character_name: "bg-pink-200 text-pink-800",
-  participating_works: "bg-teal-200 text-teal-800",
-  section_bundle: "bg-gray-200 text-gray-800"
+    rarity:   "bg-purple-200 text-purple-800",
+    feature:  "bg-green-200 text-green-800",
+    level:    "bg-blue-200 text-blue-800",
+    round:    "bg-yellow-200 text-yellow-900",
+    type:     "bg-red-200 text-red-800",
+    character_name: "bg-pink-200 text-pink-800",
+    participating_works: "bg-teal-200 text-teal-800",
+    section_bundle: "bg-gray-200 text-gray-800"
 };
 
-export default function CardFilters({filters, selectedFilters = {}, onChange}) {
+export default function Filters({filters, selectedFilters = {}, onChange}) {
     const [modal, setModal] = useState(false);
 
     if(!filters){
