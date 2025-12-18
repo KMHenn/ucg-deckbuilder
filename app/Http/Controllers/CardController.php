@@ -176,8 +176,7 @@ class CardController extends Controller
 
         $user = auth()->user();
         if (is_null($user)) {
-            $user = User::where('role', 'admin')->first();
-            // return response()->json(['message' => 'You must be logged in to track cards.'], 401);
+            return response()->json(['message' => 'You must be logged in to track cards.'], 401);
         }
 
         $user->cards()->syncWithoutDetaching([

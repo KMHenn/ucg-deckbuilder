@@ -18,10 +18,7 @@ Route::get('/card-tracker', fn() => Inertia::render('card-tracker'))->name('card
 Route::name('auth')->prefix('auth')->group(function(){
     Route::post('/register', RegisterController::class)->name('.register');
     Route::post('/login', LoginController::class)->name('.login');
-
-    Route::post('/logout', LogoutController::class)->name('.logout');
-    // Route::get('/user', fn (Illuminate\Http\Request $request) => new UserResource(User::where('role', 'admin')->first()))->name('.user');
-
+    
     Route::middleware('auth:web')->group(function(){
         Route::post('/logout', LogoutController::class)->name('.logout');
         Route::get('/user', fn (Illuminate\Http\Request $request) => new UserResource($request->user()))->name('.user');
