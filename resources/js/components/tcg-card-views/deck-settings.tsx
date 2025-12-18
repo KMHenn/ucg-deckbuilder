@@ -1,11 +1,57 @@
 import { useAuth } from '@/auth/auth-context';
 import { Button, Modal, TextInput, Alert, NativeSelect } from '@mantine/core';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IconExclamationCircle } from '@tabler/icons-react';
+import { api } from '@/lib/api';
 
-export default function DeckSettings({deck}){
+export default function DeckSettings({deck, setDeck}){
     const {user} = useAuth();
     const [modalOpen, setModalOpen] = useState(false);
+
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState('');
+    const [deckName, setDeckName] = useState('');
+    const saveDeck = async() =>{
+        try {
+            await api.post('/decks', {
+                name: deckName,
+                deck: deck, // send the current deck data
+            });
+            setDeckName(''); // clear input after save
+        } catch (err: any) {
+            console.error(err);
+            setError('Failed to save deck. Please try again.');
+        } finally {
+            setSaving(false);
+        }
+    }
+    
+    const [selectedUserDeckId, setSelectedUserDeckId] = useState('');
+    const [userDecks, setUserDecks] = useState([]);
+    useEffect(() => {
+        api.get(`/decks`)
+            .then(response => setUserDecks(response.data.data))
+            .catch(console.error);
+
+            console.log(userDecks);
+    }, []);
+    
+    const loadDeck = async() => {
+        try{
+            const response = await api.get(`decks/${selectedUserDeckId}`);
+            console.log(response.data.data);
+            setDeckName(response.data.data.name);
+            setDeck(response.data.data.cards);
+
+            setModalOpen(false);
+        } catch (err: any) {
+            console.error(err);
+            setError('Failed to load deck. Please try again.');
+        } finally {
+            setSaving(false);
+        }
+    };
+
 
     return (
         <>
@@ -29,8 +75,8 @@ export default function DeckSettings({deck}){
                             icon={<IconExclamationCircle/>}> You must be logged in to save your deck.</Alert> 
                         }
                         <div className="flex gap-4">
-                            <TextInput name="deck" placeholder="New deck"/>
-                            <Button name="save-deck" disabled={!user} variant="filled">Save</Button>
+                            <TextInput onBlur={(e) => setDeckName(e.currentTarget.value)} name="deck" placeholder="New deck"/>
+                            <Button onClick={saveDeck} name="save-deck" disabled={!user || !deckName || saving} variant="filled">Save</Button>
                         </div>
                     </div>
                     <div className="flex flex-col gap-4 shadow-sm rounded-md p-4">
@@ -41,9 +87,23 @@ export default function DeckSettings({deck}){
                             color='blue'
                             icon={<IconExclamationCircle/>}> You must be logged in to load a deck.</Alert> 
                         }
-                        <div className="flex justify-between">
-                            <NativeSelect data={[]}/>
-                            <Button name="load-deck" disabled={!user}>Load</Button>
+
+                        <div className="flex flex-col gap-4">
+                            <div className="w-full">
+                                <Alert 
+                                variant='light' 
+                                color='red'
+                                icon={<IconExclamationCircle/>}>This will overwrite your current deck.</Alert> 
+                            </div>
+                            <div className="flex gap-4">
+                             <NativeSelect
+                                data={userDecks.map((userDeck) => ({ value: userDeck.id, label: userDeck.name }))}
+                                value={selectedUserDeckId}
+                                onChange={(event) => setSelectedUserDeckId(event.currentTarget.value)}
+                                placeholder="Select a deck"
+                            />
+                            <Button name="load-deck" onClick={loadDeck} disabled={!user}>Load</Button>
+                            </div>
                         </div>
                     </div>
                 </div>

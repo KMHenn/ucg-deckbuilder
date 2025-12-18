@@ -17,7 +17,7 @@ class DeckResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'cards' => $this->cards()->orderBy('order')
+            'cards' => $this->whenLoaded('cards')
         ];
     }
 }

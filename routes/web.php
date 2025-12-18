@@ -33,7 +33,9 @@ Route::name('cards')->prefix('cards')->group(function(){
     Route::post('/{card}/quantity', [CardController::class, 'updateQuantity'])->name('.quantity');
 });
 
-Route::name('decks')->prefix('decks')->group(function(){
+Route::name('decks')->middleware('auth:web')->prefix('decks')->group(function(){
+    Route::get('/', [DeckController::class, 'list'])->name('.list');
+    Route::post('/', [DeckController::class, 'create'])->name('.create');
     Route::get('/{deck}', [DeckController::class, 'show'])->name('.show');
     Route::post('/{deck}', [DeckController::class, 'update'])->name('.update');
 });

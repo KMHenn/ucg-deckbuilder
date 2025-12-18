@@ -3,7 +3,7 @@ import QuantityInput from '../inputs/quantity-input';
 
 export default function CompactView({ card, quantity = 0, onClick, onSetQuantity}) {
     return (
-        <div className="flex flex-col w-full bg-[#ffffffeb] shadow-md rounded-md p-2 text-black gap-4">
+        <div className="flex flex-col w-full bg-[#ffffffeb] shadow-md rounded-md p-2 text-black gap-4 h-fit">
             <div 
                 onClick={onClick}
                 key={card.id} 

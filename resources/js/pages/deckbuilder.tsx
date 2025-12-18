@@ -109,7 +109,7 @@ export default function Deckbuilder() {
                                         icon={<IconExclamationCircle/>}/>
                                 )}
 
-                                <DeckSettings deck={deck}/>
+                                <DeckSettings deck={deck} setDeck={setDeck}/>
                             </div>
                             
                           <div className="grid grid-cols-2 xl:grid-cols-3 gap-2 xl:gap-4 mb-auto h-[70vh] overflow-y-scroll">
@@ -140,7 +140,7 @@ export default function Deckbuilder() {
                                     key={card.id} />);
                             })}
                         </div>
-                        <div className="flex justify-center items-center">
+                        <div className="flex justify-center items-center z-10">
                              <Pagination total={totalPages} onChange={setCurrentPage} />
                         </div>
                     </div>
