@@ -38,7 +38,7 @@ return new class extends Migration
         });
 
         Schema::create('user_cards', function(Blueprint $table){
-            $table->foreignUlid('user_id');
+            $table->foreignUuid('user_id');
             $table->foreignId('card_id');
             $table->integer('quantity');
             $table->primary(['user_id', 'card_id']);
