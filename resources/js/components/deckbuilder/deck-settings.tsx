@@ -68,7 +68,7 @@ export default function DeckSettings({deck, setDeck, setDeckSize, setDeckStats, 
                         <h1 className="font-bold">Validate Current Deck</h1>
                         <div className="flex flex-col gap-4">
                             <p>Check more complex comparisons for deck validity.</p>
-                            <Button name="validate-deck" size='auto'>Validate</Button>
+                            <Button name="validate-deck" size='auto' disabled>Validate</Button>
                             <div></div>
                         </div>
                     </div>

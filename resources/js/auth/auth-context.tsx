@@ -66,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       password,
     });
 
-    setUser(res.data.data);
+    window.location.reload();
   };
 
   /**
@@ -75,8 +75,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     await api.get('/sanctum/csrf-cookie');
     await api.post('/auth/logout');
-    setUser(null);
-    await refresh();
+
+    window.location.reload();
   };
 
   useEffect(() => {

@@ -51,7 +51,7 @@ export default function CardList({deck, openCardModal, setCardQuantity}){
                     selectedFilters={selectedFilters}
                     onChange={setSelectedFilters}/>
                     
-                <div className="h-[75vh] grid grid-cols-1 xl:grid-cols-2 gap-2 xl:gap-4 overflow-y-scroll">
+                <div className="h-[70vh] grid grid-cols-1 xl:grid-cols-2 gap-2 xl:gap-4 overflow-y-scroll">
                     {cardList.map(card => {
                         return (<CompactView 
                             quantity={deck[card.id]?.quantity ?? 0}
