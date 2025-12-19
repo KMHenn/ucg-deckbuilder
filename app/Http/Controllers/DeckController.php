@@ -82,31 +82,40 @@ class DeckController extends Controller
     }
 
     private function getStatistics(Deck $deck){
-
         $rows = DB::table('deck_cards')
             ->join('cards', 'cards.id', '=', 'deck_cards.card_id')
             ->where('deck_cards.deck_id', $deck->id)
-            ->select(
-                'cards.character_name',
-                'cards.level',
-                DB::raw('SUM(deck_cards.quantity) as total')
-            )
-            ->groupBy('cards.character_name', 'cards.level')
-            ->orderBy('cards.character_name')
-            ->orderBy('cards.level')
+            ->selectRaw("
+                CASE 
+                    WHEN cards.feature = 'scene' THEN 'Scenes'
+                    ELSE cards.character_name
+                END as `character`,
+                CASE
+                    WHEN cards.feature = 'scene' THEN cards.round
+                    ELSE cards.level
+                END as bucket,
+                cards.feature,
+                SUM(deck_cards.quantity) as total
+            ")
+            ->groupBy('character', 'bucket', 'cards.feature')
+            ->orderBy('character')
+            ->orderBy('bucket')
             ->get();
 
         return $rows
-            ->groupBy('character_name')
+            ->groupBy('character')
             ->map(function ($items, $character) {
                 $row = ['character' => $character];
 
                 foreach ($items as $item) {
-                    $row['level_' . $item->level] = $item->total;
+                    $key = $item->feature === 'scene'
+                        ? 'Round ' . $item->bucket
+                        : 'Level ' . $item->bucket;
+
+                    $row[$key] = $item->total;
                 }
 
                 return $row;
-            })
-            ->values();
+            })->values();
     }
 }
