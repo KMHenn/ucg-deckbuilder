@@ -2,17 +2,15 @@ import BaseLayout from '../layouts/base-layout';
 import { useState, useEffect } from 'react';
 import '@mantine/core/styles/Modal.css';
 import {api} from '../lib/api';
-import { useAuth } from '@/auth/auth-context';
 import Filters from '@/components/tcg-card-views/filters';
 import { Alert, Modal, Pagination, } from '@mantine/core';
 import { IconExclamationCircle} from '@tabler/icons-react';
 import DetailedView from '@/components/tcg-card-views/detailed-view';
 import CompactView from '@/components/tcg-card-views/compact-view';
 import DeckSettings from '@/components/tcg-card-views/deck-settings';
+import DeckStatistics from '@/components/tcg-card-views/deck-statistics';
 
 export default function Deckbuilder() {
-    const {user} = useAuth();
-
     // Card listing 
     const recordsPerPage = 12;
     const [cardList, setCardList] = useState([]);
@@ -24,6 +22,7 @@ export default function Deckbuilder() {
     // Deck info
     const [deckSize, setDeckSize] = useState(0);
     const [deck, setDeck] = useState<{ [cardId: number]: { card: any, quantity: number } }>({});
+    const [deckStats, setDeckStats] = useState([]);
     const setCardQuantity = (card: Object, quantity: number) => {
         setDeck(prev => {
             const copy = { ...prev };
@@ -90,8 +89,8 @@ export default function Deckbuilder() {
     return (
         <BaseLayout>
             <div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 justify-between">
-                    <div className="md:col-span-1 grid shadow-md content-baseline p-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 justify-between">
+                    <div className="md:col-span-2 grid shadow-md content-baseline p-4">
                             <div className="w-full flex justify-between items-center">
                                 <h1 className="h-fit">{deckSize} / 50</h1>
 
@@ -103,10 +102,11 @@ export default function Deckbuilder() {
                                         icon={<IconExclamationCircle/>}/>
                                 )}
 
-                                <DeckSettings deck={deck} setDeck={setDeck} setDeckSize={setDeckSize}/>
+                                <DeckSettings deck={deck} setDeck={setDeck} setDeckSize={setDeckSize} setDeckStats={setDeckStats}/>
                             </div>
                             
-                          <div className="p-4 grid grid-cols-2 xl:grid-cols-3 gap-2 xl:gap-4 mb-auto h-[70vh] overflow-y-scroll">
+                            <DeckStatistics data={deckStats}/>
+                          <div className="p-4 grid grid-cols-3 xl:grid-cols-4 gap-2 xl:gap-4 mb-auto h-[75vh] overflow-y-scroll">
                             {Object.entries(deck).map(([id, { card, quantity }]) => (
                                 <CompactView 
                                     key={'deck-' + id}
@@ -118,12 +118,14 @@ export default function Deckbuilder() {
                             ))}
                         </div>
                     </div>
-                    {/** @TODO modal for viewing graph */}
+
+                    <div><h1 className="font-bold">Card List</h1>
                     <div className="shadow-md p-4 gap-y-4 flex flex-col">
                         <Filters 
                             filters={filters}
                             selectedFilters={selectedFilters}
                             onChange={setSelectedFilters}/>
+                            
                         <div className="h-[75vh] grid grid-cols-2 gap-2 xl:gap-4 overflow-y-scroll">
                             {cardList.map(card => {
                                 return (<CompactView 
@@ -137,6 +139,7 @@ export default function Deckbuilder() {
                         <div className="flex justify-center items-center z-20">
                              <Pagination total={totalPages} onChange={setCurrentPage} />
                         </div>
+                    </div>
                     </div>
                 </div>
             </div>

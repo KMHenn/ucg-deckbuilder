@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateDeckRequest;
 use Illuminate\Http\Request;
 use App\Models\Deck;
 use App\Http\Resources\DeckResource;
+use Illuminate\Support\Facades\DB;
 
 class DeckController extends Controller
 {
@@ -40,7 +41,8 @@ class DeckController extends Controller
             'data' => [
                 'id' => $deck->id,
                 'name' => $deck->name,
-                'cards' => $deckData
+                'cards' => $deckData,
+                'statistics' => $this->getStatistics($deck)
             ]
         ]);
     }
@@ -77,5 +79,34 @@ class DeckController extends Controller
 
     public function update(Deck $deck, UpdateDeckRequest $request){
         // @TODO update deck
+    }
+
+    private function getStatistics(Deck $deck){
+
+        $rows = DB::table('deck_cards')
+            ->join('cards', 'cards.id', '=', 'deck_cards.card_id')
+            ->where('deck_cards.deck_id', $deck->id)
+            ->select(
+                'cards.character_name',
+                'cards.level',
+                DB::raw('SUM(deck_cards.quantity) as total')
+            )
+            ->groupBy('cards.character_name', 'cards.level')
+            ->orderBy('cards.character_name')
+            ->orderBy('cards.level')
+            ->get();
+
+        return $rows
+            ->groupBy('character_name')
+            ->map(function ($items, $character) {
+                $row = ['character' => $character];
+
+                foreach ($items as $item) {
+                    $row['level_' . $item->level] = $item->total;
+                }
+
+                return $row;
+            })
+            ->values();
     }
 }
