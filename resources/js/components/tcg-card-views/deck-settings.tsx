@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { api } from '@/lib/api';
 
-export default function DeckSettings({deck, setDeck}){
+export default function DeckSettings({deck, setDeck, setDeckSize}){
     const {user} = useAuth();
     const [modalOpen, setModalOpen] = useState(false);
 
@@ -17,7 +17,8 @@ export default function DeckSettings({deck, setDeck}){
                 name: deckName,
                 deck: deck, // send the current deck data
             });
-            setDeckName(''); // clear input after save
+            setModalOpen(false);
+            setSaving(false);
         } catch (err: any) {
             console.error(err);
             setError('Failed to save deck. Please try again.');
@@ -39,9 +40,15 @@ export default function DeckSettings({deck, setDeck}){
     const loadDeck = async() => {
         try{
             const response = await api.get(`decks/${selectedUserDeckId}`);
+            const deckData = response.data.data.cards; // this is the { [cardId]: { card, quantity } } object
+            setDeck(deckData);
+
             console.log(response.data.data);
             setDeckName(response.data.data.name);
             setDeck(response.data.data.cards);
+
+            const total = Object.values(deckData).reduce((sum, entry) => sum + entry.quantity, 0);
+            setDeckSize(total);
 
             setModalOpen(false);
         } catch (err: any) {
@@ -56,6 +63,7 @@ export default function DeckSettings({deck, setDeck}){
     return (
         <>
             <Button onClick={() => setModalOpen(true)}>Deck Options</Button>
+
             <Modal size="xl" opened={modalOpen} onClose={() => setModalOpen(false)} title="Deck Options">
                 <div className="h-fit w-full flex flex-col gap-8">
                     <div className="flex flex-col gap-4 p-4 shadow-sm rounded-md">

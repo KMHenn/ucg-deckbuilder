@@ -19,16 +19,12 @@ export default function Deckbuilder() {
     const [currentPage, setCurrentPage] = useState(1);
     const [filters, setFilters] = useState({});
     const [selectedFilters, setSelectedFilters] = useState({});
-    const [totalCards, setTotalCards] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
 
     // Deck info
     const [deckSize, setDeckSize] = useState(0);
     const [deck, setDeck] = useState<{ [cardId: number]: { card: any, quantity: number } }>({});
     const setCardQuantity = (card: Object, quantity: number) => {
-        console.log(card);
-        console.log(quantity);
-        console.log('setting quantity for cardId ' + card.id + ' to ' + quantity )
         setDeck(prev => {
             const copy = { ...prev };
             if (quantity <= 0) {
@@ -38,8 +34,6 @@ export default function Deckbuilder() {
             }
             return copy;
         });
-
-        console.log(deck);
     };
 
     useEffect(() => {
@@ -84,8 +78,8 @@ export default function Deckbuilder() {
         api.get(requestUrl)
           .then(response => {
             setCardList(response.data.data);
-            setTotalCards(response.data.meta.total_cards);
-            setTotalPages(totalCards / recordsPerPage);
+            const total = response.data.meta.total_cards;
+            setTotalPages(Math.ceil(total / recordsPerPage));
           })
           .catch(console.error);
     }, [currentPage, selectedFilters]);
@@ -109,10 +103,10 @@ export default function Deckbuilder() {
                                         icon={<IconExclamationCircle/>}/>
                                 )}
 
-                                <DeckSettings deck={deck} setDeck={setDeck}/>
+                                <DeckSettings deck={deck} setDeck={setDeck} setDeckSize={setDeckSize}/>
                             </div>
                             
-                          <div className="grid grid-cols-2 xl:grid-cols-3 gap-2 xl:gap-4 mb-auto h-[70vh] overflow-y-scroll">
+                          <div className="p-4 grid grid-cols-2 xl:grid-cols-3 gap-2 xl:gap-4 mb-auto h-[70vh] overflow-y-scroll">
                             {Object.entries(deck).map(([id, { card, quantity }]) => (
                                 <CompactView 
                                     key={'deck-' + id}
@@ -130,7 +124,7 @@ export default function Deckbuilder() {
                             filters={filters}
                             selectedFilters={selectedFilters}
                             onChange={setSelectedFilters}/>
-                        <div className="h-[70vh] grid grid-cols-2 gap-2 xl:gap-4 overflow-y-scroll">
+                        <div className="h-[75vh] grid grid-cols-2 gap-2 xl:gap-4 overflow-y-scroll">
                             {cardList.map(card => {
                                 return (<CompactView 
                                     quantity={deck[card.id]?.quantity ?? 0}
@@ -140,7 +134,7 @@ export default function Deckbuilder() {
                                     key={card.id} />);
                             })}
                         </div>
-                        <div className="flex justify-center items-center z-10">
+                        <div className="flex justify-center items-center z-20">
                              <Pagination total={totalPages} onChange={setCurrentPage} />
                         </div>
                     </div>

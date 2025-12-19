@@ -23,7 +23,7 @@ export default function CompactView({ card, quantity = 0, onClick, onSetQuantity
                         <h2 className="text-xs">{card.subtitle}</h2>
                     </div>
                     
-                    <Tags tags={card.tags}/> 
+                    {/* <Tags tags={card.tags}/>  */}
                 </div>
             </div>
 

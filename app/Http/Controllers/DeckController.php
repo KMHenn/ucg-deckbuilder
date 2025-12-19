@@ -10,10 +10,44 @@ use App\Http\Resources\DeckResource;
 
 class DeckController extends Controller
 {
+    /**
+     * GET Deck
+     * 
+     * Returns full deck and details.
+     */
     public function show(Deck $deck, Request $request){
         return new DeckResource($deck->load('cards'));
     }
 
+    /**
+     * GET Load Deck
+     * 
+     * Returns the deck, formatted for the frontend
+     */
+    public function load(Deck $deck, Request $request){
+        $deck->load('cards');
+
+        // Transform into the format frontend expects
+        $deckData = [];
+        foreach ($deck->cards as $card) {
+            $deckData[$card->id] = [
+                'card' => $card,
+                'quantity' => $card->pivot->quantity
+            ];
+        }
+
+        return response()->json([
+            'data' => [
+                'id' => $deck->id,
+                'name' => $deck->name,
+                'cards' => $deckData
+            ]
+        ]);
+    }
+
+    /**
+     * GET User's Decks
+     */
     public function list(Request $request){
         $user = auth()->user();
         $decks = $user->decks;
