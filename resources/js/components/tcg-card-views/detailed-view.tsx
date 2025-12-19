@@ -53,8 +53,8 @@ export default function DetailedView({card}){
                 </div>
                 { card.errata_url && 
                     <div>
-                    <h3 className="font-semibold">Errata Posted</h3>
-                    <a href={card.errata_url} target="_blank" className="underline hover:text-blue-900">{card.errata_url}</a>
+                        <h3 className="font-semibold">Errata Posted</h3>
+                        <a href={card.errata_url} target="_blank" className="underline hover:text-blue-900">{card.errata_url}</a>
                     </div>
                 }
             </div>

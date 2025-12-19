@@ -22,7 +22,7 @@ export default function CompactView({ card, quantity = 0, disableQuantityInput =
                     </div>
                 </div>
 
-                <Tags className="hidden lg:flex flex-wrap gap-2 w-auto" tags={card.tags}/> 
+                {/* <Tags className="hidden xl:flex flex-wrap gap-2 w-auto" tags={card.tags}/>  */}
             </div>
 
             <div className="mx-auto w-fit">
