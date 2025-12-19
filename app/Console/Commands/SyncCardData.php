@@ -42,10 +42,11 @@ class SyncCardData extends Command
                 $bpData = null;
                 if($card['feature']['value'] !== 'scene'){
                     $bpData = [
-                        $card['battle_power_1'],
-                        $card['battle_power_2'],
-                        $card['battle_power_3'],
-                        $card['battle_power_ex'],
+                        ['label' => 'Single', 'value' => $card['battle_power_1']],
+                        ['label' => 'Double', 'value' => $card['battle_power_2']],
+                        ['label' => 'Triple', 'value' => $card['battle_power_3']],
+                        ['label' => 'Quad',   'value' => $card['battle_power_4']],
+                        ['label' => 'Extra',  'value' => $card['battle_power_ex']],
                     ];
                 }
 
@@ -62,7 +63,7 @@ class SyncCardData extends Command
                     $card['detail']['effect'] = null;
                 }
 
-                $cardModel = Card::updateOrCreate([
+                Card::updateOrCreate([
                     'id' => $card['id']
                 ],
                 [

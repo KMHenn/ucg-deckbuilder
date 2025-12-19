@@ -31,18 +31,18 @@ export default function DetailedView({card}){
                 {card.effect && (
                     <div>
                         <h3 className="font-semibold">Effect</h3>
-                    <p>{card.effect}</p>
+                        <p>{card.effect}</p>
                     </div>
                 )}
                 {card.bp_ranks && (
                     <div>
                         <h3 className="font-semibold">BP Ranks</h3>
                         <div className="flex w-full justify-between">
-                            {Object.entries(card.bp_ranks).map(([label, bp_rank]) => (
-                            <div key={label} className="tcg-card-display-tag text-sm">
+                            {card.bp_ranks.map(({ label, value }) => (
+                                <div key={label} className="tcg-card-display-tag text-sm">
                                 <div className="text-xs opacity-50">{label}</div>
-                                <div>{bp_rank ?? 'N/A'}</div>
-                            </div>
+                                <div>{value ?? 'N/A'}</div>
+                                </div>
                             ))}
                         </div>
                     </div>

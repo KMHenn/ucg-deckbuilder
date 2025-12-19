@@ -112,12 +112,13 @@ class Card extends Model
             return [];
         }
 
-        $labels = collect(['Single', 'Double', 'Triple', 'Extra']);
+        $labels = ['Single', 'Double', 'Triple', 'Extra'];
 
-        return $labels
-            ->take(count($this->bp_ranks))
-            ->combine($this->bp_ranks)
-            ->all();
+        // Only map as many labels as there are ranks
+        return array_combine(
+            array_slice($labels, 0, count($this->bp_ranks)),
+            $this->bp_ranks
+        ) ?: [];
     }
 
 

@@ -104,7 +104,7 @@ describe('GET /cards/{card}', function(){
                 'bundle' => $card->bundle,
                 'character_name' => $card->character_name,
                 'bp_ranks' => $card->bp_ranks,
-                'errata' => $card->errata_url,
+                'errata_url' => $card->errata_url,
                 'ascended' => !is_null($card->ascended_date),
                 'related_cards' => !is_null($card->branch) ? $card->getRelatedCards()->toArray() : [],
             ]
@@ -138,11 +138,12 @@ describe('GET /cards/{card}', function(){
                 'feature' => $card->feature,
                 'rarity' => $card->rarity,
                 'participating_works' => $card->participating_works,
+                'bp_ranks' => $card->bp_ranks,
                 'quantity' => $user->cardQuantity($card->id),
                 'section' => $card->section,
                 'bundle' => $card->bundle,
                 'character_name' => $card->character_name,
-                'errata' => $card->errata_url,
+                'errata_url' => $card->errata_url,
                 'ascended' => !is_null($card->ascended_date),
                 'related_cards' => !is_null($card->branch) ? $card->getRelatedCards()->toArray() : [],
             ]
