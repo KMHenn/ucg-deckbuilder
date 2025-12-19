@@ -59,6 +59,9 @@ class DeckController extends Controller
         return DeckResource::collection($decks);
     }
 
+    /**
+     * POST Create Deck
+     */
     public function create(CreateDeckRequest $request){
         $data = $request->validated();
         $user = auth()?->user();
@@ -79,11 +82,18 @@ class DeckController extends Controller
         return new DeckResource($deck->load('cards'));
     }
 
+    /**
+     * POST Update Deck
+     */
     public function update(Deck $deck, UpdateDeckRequest $request){
         // @TODO update deck
     }
 
+    /**
+     * GET Draw Hand
+     */
     public function drawHand(Deck $deck, Request $request){
+        // @TODO can this be streamlined? Queries reduced?
         $deckCards = $deck->cards()->withPivot('quantity')->get();
         $expandedDeckCards = [];
 
@@ -95,17 +105,20 @@ class DeckController extends Controller
 
         shuffle($expandedDeckCards);
         $hand = array_slice($expandedDeckCards, 0, 6);
+
         // Fetch all unique card models at once
         $cardsById = Card::whereIn('id', $hand)
             ->get()
-            ->keyBy('id'); // map by ID for easy lookup
+            ->keyBy('id');
 
         // Map back to preserve duplicates and order
         $handCards = collect($hand)->map(fn($id) => $cardsById[$id]);
-
         return CardResource::collection($handCards);
     }
 
+    /**
+     * Get breakdown of rounds/levels by specific characters
+     */
     private function getStatistics(Deck $deck){
         $deckTotal = DB::table('deck_cards')
             ->where('deck_id', $deck->id)
