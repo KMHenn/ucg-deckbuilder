@@ -10,6 +10,7 @@ import Deck from '@/components/deckbuilder/deck';
 export default function Deckbuilder() {
     const [deckSize, setDeckSize] = useState(0);
     const [deck, setDeck] = useState<{ [cardId: number]: { card: any, quantity: number } }>({});
+    const [deckId, setDeckId] = useState(null);
     const [deckStats, setDeckStats] = useState([]);
     const setCardQuantity = (card: Object, quantity: number) => {
         setDeck(prev => {
@@ -51,6 +52,8 @@ export default function Deckbuilder() {
                             deckSize={deckSize}
                             setDeckSize={setDeckSize}
                             deck={deck}
+                            deckId={deckId}
+                            setDeckId={setDeckId}
                             setDeck={setDeck}
                             deckStats={deckStats}
                             setDeckStats={setDeckStats}

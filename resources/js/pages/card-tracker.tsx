@@ -45,7 +45,6 @@ export default function CardTracker() {
 
         api.get(`${cardListRequest}`)
             .then(response => {
-              console.log('updating rendered cards')
               setCardList(response.data.data);
               setTotalCards(response.data.meta.total_cards);
             })

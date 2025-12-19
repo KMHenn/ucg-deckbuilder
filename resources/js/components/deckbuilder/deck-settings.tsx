@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { IconExclamationCircle, IconTools } from '@tabler/icons-react';
 import { api } from '@/lib/api';
 
-export default function DeckSettings({deck, setDeck, setDeckSize, setDeckStats}){
+export default function DeckSettings({deck, setDeck, setDeckSize, setDeckStats, setDeckId}){
     const {user} = useAuth();
     const [modalOpen, setModalOpen] = useState(false);
 
@@ -33,8 +33,6 @@ export default function DeckSettings({deck, setDeck, setDeckSize, setDeckStats})
         api.get(`/decks`)
             .then(response => setUserDecks(response.data.data))
             .catch(console.error);
-
-            console.log(userDecks);
     }, []);
     
     const loadDeck = async() => {
@@ -42,10 +40,8 @@ export default function DeckSettings({deck, setDeck, setDeckSize, setDeckStats})
             const response = await api.get(`decks/${selectedUserDeckId}/load`);
             const deckData = response.data.data.cards; // this is the { [cardId]: { card, quantity } } object
             setDeck(deckData);
-
-            console.log(response.data.data);
             setDeckName(response.data.data.name);
-            setDeck(response.data.data.cards);
+            setDeckId(response.data.data.id);
 
             const total = Object.values(deckData).reduce((sum, entry) => sum + entry.quantity, 0);
             setDeckSize(total);

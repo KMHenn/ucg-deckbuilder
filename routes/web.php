@@ -40,4 +40,5 @@ Route::name('decks')->middleware('auth:web')->prefix('decks')->group(function(){
     Route::post('/{deck}', [DeckController::class, 'update'])->name('.update');
     Route::get('/{deck}/load', [DeckController::class, 'load'])->name('.load');
     Route::get('/{deck}/statistics', [DeckController::class, 'getStatistics'])->name('.statistics');
+    Route::get('/{deck}/hand', [DeckController::class, 'drawHand'])->name('.draw-hand');
 });

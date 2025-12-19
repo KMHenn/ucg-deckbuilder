@@ -28,14 +28,6 @@ export default function BaseLayout({ children }) {
         href={link.link}
         label={link.label}/>
     ));
-
-    if(!user){
-      console.log('no user logged in');
-    }
-    else{
-    console.log('user: ' + user.username);
-    }
-
   return (
     <MantineProvider>
       <div className="min-h-screen">
