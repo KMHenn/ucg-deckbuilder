@@ -40,6 +40,7 @@ class CardResource extends JsonResource
                     'section' => $this->section,
                     'bundle' => $this->bundle,
                     'character_name' => $this->character_name,
+                    'bp_ranks' => $this->formattedBpRanks(),
                     'errata_url' => $this->errata_url,
                     'ascended' => !is_null($this->ascended_date),
                     'related_cards' => $this->whenNull($this->branch, $this->getRelatedCards()) ?? [],

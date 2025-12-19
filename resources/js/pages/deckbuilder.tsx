@@ -8,7 +8,6 @@ import CardList from '@/components/deckbuilder/card-list';
 import Deck from '@/components/deckbuilder/deck';
 
 export default function Deckbuilder() {
-    // Deck info
     const [deckSize, setDeckSize] = useState(0);
     const [deck, setDeck] = useState<{ [cardId: number]: { card: any, quantity: number } }>({});
     const [deckStats, setDeckStats] = useState([]);

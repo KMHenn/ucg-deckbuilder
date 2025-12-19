@@ -103,6 +103,7 @@ describe('GET /cards/{card}', function(){
                 'section' => $card->section,
                 'bundle' => $card->bundle,
                 'character_name' => $card->character_name,
+                'bp_ranks' => $card->bp_ranks,
                 'errata' => $card->errata_url,
                 'ascended' => !is_null($card->ascended_date),
                 'related_cards' => !is_null($card->branch) ? $card->getRelatedCards()->toArray() : [],

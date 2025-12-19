@@ -82,6 +82,11 @@ class DeckController extends Controller
     }
 
     private function getStatistics(Deck $deck){
+        $deckTotal = DB::table('deck_cards')
+            ->where('deck_id', $deck->id)
+            ->sum('quantity');
+
+        // Get breakdown of card distribution
         $rows = DB::table('deck_cards')
             ->join('cards', 'cards.id', '=', 'deck_cards.card_id')
             ->where('deck_cards.deck_id', $deck->id)
@@ -103,19 +108,47 @@ class DeckController extends Controller
             ->get();
 
         return $rows
-            ->groupBy('character')
-            ->map(function ($items, $character) {
-                $row = ['character' => $character];
+        ->groupBy('character')
+        ->sortBy(fn ($_, $character) => $character === 'Scenes' ? 1 : 0)
+        ->map(function ($items, $character) use ($deckTotal) {
+            $characterTotal = $items->sum('total');
 
-                foreach ($items as $item) {
-                    $key = $item->feature === 'scene'
-                        ? 'Round ' . $item->bucket
-                        : 'Level ' . $item->bucket;
+            $row = [
+                'character' => $character,
+                'deckPercent' => round(($characterTotal / $deckTotal) * 100, 1),
+            ];
 
-                    $row[$key] = $item->total;
-                }
+            foreach ($items as $item) {
+                $label = $item->feature === 'scene'
+                    ? 'Round ' . $item->bucket
+                    : 'Level ' . $item->bucket;
 
-                return $row;
-            })->values();
+                $row[$label] = $item->total;
+
+                $row[$label . 'Percent'] = round(
+                    ($item->total / $characterTotal) * 100,
+                    1
+                );
+            }
+
+            return $row;
+        })
+        ->values();
+
+        // return $rows
+        //     ->groupBy('character')
+        //     ->map(function ($items, $character) {
+        //         $row = ['character' => $character];
+
+        //         foreach ($items as $item) {
+        //             $key = $item->feature === 'scene'
+        //                 ? 'Round ' . $item->bucket
+        //                 : 'Level ' . $item->bucket;
+
+        //             $row[$key] = $item->total;
+        //         }
+
+        //         return $row;
+        //     })->values();
     }
 }

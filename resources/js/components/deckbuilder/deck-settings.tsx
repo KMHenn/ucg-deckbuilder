@@ -1,7 +1,7 @@
 import { useAuth } from '@/auth/auth-context';
 import { Button, Modal, TextInput, Alert, NativeSelect } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { IconExclamationCircle } from '@tabler/icons-react';
+import { IconExclamationCircle, IconTools } from '@tabler/icons-react';
 import { api } from '@/lib/api';
 
 export default function DeckSettings({deck, setDeck, setDeckSize, setDeckStats}){
@@ -64,7 +64,7 @@ export default function DeckSettings({deck, setDeck, setDeckSize, setDeckStats})
 
     return (
         <>
-            <Button onClick={() => setModalOpen(true)}>Deck Options</Button>
+            <Button onClick={() => setModalOpen(true)} rightSection={<IconTools/>}>Deck Options</Button>
 
             <Modal size="xl" opened={modalOpen} onClose={() => setModalOpen(false)} title="Deck Options">
                 <div className="h-fit w-full flex flex-col gap-8">

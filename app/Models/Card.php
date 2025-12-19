@@ -36,7 +36,7 @@ class Card extends Model
     ];
 
     protected $casts = [
-        'bp_ranks' => 'json',
+        'bp_ranks' => 'array',
         'ascended_date' => 'date',
         'override_card_limit' => 'boolean'
     ];
@@ -102,6 +102,24 @@ class Card extends Model
 
         return sprintf('%s-%s', $this->section, $this->bundle);
     }
+
+    /**
+     * Note: The actual source data doesn't have any handling for RRRR cards.
+     * Because of this we're assuming anything in the fourth slot is an Extra BP
+     */
+    public function formattedBpRanks(): array{
+        if ($this->feature === 'scene') {
+            return [];
+        }
+
+        $labels = collect(['Single', 'Double', 'Triple', 'Extra']);
+
+        return $labels
+            ->take(count($this->bp_ranks))
+            ->combine($this->bp_ranks)
+            ->all();
+    }
+
 
     /**
      * Gather array formatted columns based on card type

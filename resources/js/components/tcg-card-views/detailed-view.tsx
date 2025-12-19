@@ -20,8 +20,8 @@ export default function DetailedView({card}){
         <div className="px-4 grid grid-cols-2 gap-x-8">
             <div className="flex flex-col gap-y-2">
                 <div>
-                    <h1 className="text-lg font-bold mx-auto w-fit">{card.formatted_name}</h1>
-                    <h2 className="text-sm mx-auto w-fit">{card.number}</h2>
+                    <h1 className="text-lg font-bold mx-auto w-fit">{card.name}</h1>
+                    <h2 className="text-base mx-auto w-fit">{card.subtitle}</h2>
                 </div>
 
                 <img className="w-auto h-auto max-w-40 max-h-40 md:max-w-60 md:max-h-60 mx-auto" src={card.thumbnail_url} alt={card.formatted_name + ' image'}/>
@@ -32,6 +32,19 @@ export default function DetailedView({card}){
                     <div>
                         <h3 className="font-semibold">Effect</h3>
                     <p>{card.effect}</p>
+                    </div>
+                )}
+                {card.bp_ranks && (
+                    <div>
+                        <h3 className="font-semibold">BP Ranks</h3>
+                        <div className="flex w-full justify-between">
+                            {Object.entries(card.bp_ranks).map(([label, bp_rank]) => (
+                            <div key={label} className="tcg-card-display-tag text-sm">
+                                <div className="text-xs opacity-50">{label}</div>
+                                <div>{bp_rank ?? 'N/A'}</div>
+                            </div>
+                            ))}
+                        </div>
                     </div>
                 )}
                 <div>

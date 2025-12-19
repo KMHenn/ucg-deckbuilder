@@ -2,6 +2,8 @@ import { BarChart } from '@mantine/charts';
 import { Card, Loader, Center, Text, Stack, Modal, Button } from '@mantine/core';
 import { useMemo, useState } from 'react';
 import '@mantine/charts/styles.css';
+import DeckTooltip from './deck-tooltip';
+import { IconGraph } from '@tabler/icons-react';
 
 type DeckBreakdownRow = {
   character: string;
@@ -36,7 +38,7 @@ const LEVEL_COLORS: Record<string, string> = {
 export default function DeckStatistics({
   data = [],
   loading = false,
-  height = 500,
+  height = 400,
 }: Props) {
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -47,6 +49,10 @@ export default function DeckStatistics({
 
     data.forEach(row => {
       Object.keys(row).forEach(key => {
+        if(key.includes('Percent')){
+          return;
+        }
+
         if (key.startsWith('Level ') || key.startsWith('Round ')) {
           analytics.add(key);
         }
@@ -62,7 +68,7 @@ export default function DeckStatistics({
   }, [data]);
   return (
     <>
-      <Button onClick={() => setModalOpen(true)}>View Analytics</Button>
+      <Button onClick={() => setModalOpen(true)} rightSection={<IconGraph/>}>View Analytics</Button>
 
       <Modal size="xl" opened={modalOpen} onClose={() => setModalOpen(false)} title="Deck Analytics">
         <Card withBorder radius="md">
@@ -79,6 +85,8 @@ export default function DeckStatistics({
                 <Text c="dimmed">No deck data available</Text>
               </Center>
             )}
+
+            {data.length > 0 && (
             <BarChart
               h={height}
               data={data}
@@ -87,11 +95,14 @@ export default function DeckStatistics({
               series={series}
               withLegend
               yAxisProps={{ tickMargin: 5, ticks: yTicks, domain: [0,50] }}
-              
               legendProps={{ verticalAlign: 'bottom', height: 50 }}
-              withTooltip
+              tooltipProps={{
+                content: ({ label, payload }) => (
+                    <DeckTooltip label={label} payload={payload as any} />
+                ),
+              }}
               gridAxis="y"
-            />
+            />)}
           </Stack>
         </Card>
       </Modal>
